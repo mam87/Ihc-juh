@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IHC & Special Stains — Lab System</title>
+<title>IHC & Special Stains — Histopathology Lab · JUH</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* ═══════════════════════ VARIABLES ═══════════════════════ */
 :root{
   --bg:#060910;--surface:#0d1117;--surface2:#161b26;--surface3:#1c2333;
   --border:#21293d;--accent:#3b82f6;--accent2:#1d4ed8;
@@ -17,7 +18,7 @@
 body{font-family:var(--sans);background:var(--bg);color:var(--text);
   min-height:100vh;position:relative;overflow-x:hidden}
 
-/* ── Background ── */
+/* ═══════════════════════ BACKGROUND ═══════════════════════ */
 .bg-wrap{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
 .bg-orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.4}
 .orb1{width:600px;height:600px;top:-160px;left:-160px;
@@ -30,73 +31,76 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);
   background:radial-gradient(circle,#312e81,transparent 70%);
   animation:orbMove3 16s ease-in-out infinite alternate}
 
-/* ── NAV ── */
-.nav{
-  position:fixed;top:0;left:0;right:0;z-index:100;
+/* ═══════════════════════ LOCK SCREEN ═══════════════════════ */
+.lock-overlay{position:fixed;inset:0;z-index:500;
+  background:rgba(4,7,14,0.97);backdrop-filter:blur(20px);
+  display:flex;align-items:center;justify-content:center;padding:20px}
+.lock-box{background:rgba(13,17,23,0.95);border:1px solid rgba(255,255,255,0.08);
+  border-radius:20px;padding:40px 36px;width:100%;max-width:360px;text-align:center;
+  box-shadow:0 40px 100px rgba(0,0,0,.8)}
+.lock-icon{font-size:44px;margin-bottom:16px}
+.lock-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px}
+.lock-sub{font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:26px;letter-spacing:.5px}
+.lock-input{background:var(--surface2);border:1px solid var(--border);border-radius:10px;
+  color:var(--text);font-size:20px;padding:14px;width:100%;outline:none;
+  text-align:center;letter-spacing:8px;font-family:var(--mono);margin-bottom:14px;-webkit-appearance:none}
+.lock-input:focus{border-color:rgba(59,130,246,0.6);box-shadow:0 0 0 3px rgba(59,130,246,0.1)}
+.lock-btn{width:100%;background:linear-gradient(135deg,var(--accent2),var(--accent));
+  color:#fff;font-family:var(--sans);font-weight:700;font-size:14px;
+  border:none;border-radius:10px;padding:14px;cursor:pointer;transition:all .2s}
+.lock-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(59,130,246,0.35)}
+.lock-err{color:var(--red);font-size:12px;font-family:var(--mono);margin-top:10px;min-height:18px}
+.lock-hint{margin-top:14px;font-size:11px;color:#334155;font-family:var(--mono)}
+
+/* ═══════════════════════ NAV ═══════════════════════ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;
   display:flex;align-items:center;justify-content:space-between;
-  padding:14px 28px;
-  background:rgba(6,9,16,0.7);
-  backdrop-filter:blur(20px);
-  border-bottom:1px solid rgba(255,255,255,0.06);
-}
+  padding:12px 24px;background:rgba(6,9,16,0.75);
+  backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06)}
 .nav-brand{display:flex;align-items:center;gap:10px}
 .nav-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);
   box-shadow:0 0 10px var(--accent);animation:pulse 2s infinite}
-.nav-title{font-family:var(--mono);font-size:12px;letter-spacing:2px;
-  color:var(--accent);text-transform:uppercase}
-.nav-tabs{display:flex;gap:4px}
-.nav-tab{
-  background:transparent;border:1px solid transparent;
-  border-radius:8px;padding:8px 18px;font-size:13px;font-weight:500;
-  color:var(--muted);cursor:pointer;transition:all .2s;font-family:var(--sans);
-  display:flex;align-items:center;gap:7px;
-}
+.nav-title{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--accent);text-transform:uppercase}
+.nav-tabs{display:flex;gap:4px;flex-wrap:wrap}
+.nav-tab{background:transparent;border:1px solid transparent;border-radius:8px;
+  padding:7px 16px;font-size:13px;font-weight:500;color:var(--muted);
+  cursor:pointer;transition:all .2s;font-family:var(--sans);display:flex;align-items:center;gap:7px}
 .nav-tab:hover{color:var(--text);background:rgba(255,255,255,0.05)}
-.nav-tab.active{color:var(--accent);background:rgba(59,130,246,0.1);
-  border-color:rgba(59,130,246,0.25)}
-.nav-tab .badge{
-  background:var(--accent);color:#fff;border-radius:999px;
+.nav-tab.active{color:var(--accent);background:rgba(59,130,246,0.1);border-color:rgba(59,130,246,0.25)}
+.nav-tab .badge{background:var(--accent);color:#fff;border-radius:999px;
   padding:1px 7px;font-size:10px;font-family:var(--mono);min-width:20px;text-align:center}
 
-/* ── PAGES ── */
-.page{display:none;padding-top:80px;min-height:100vh;
-  position:relative;z-index:2}
-.page.active{display:flex;flex-direction:column;align-items:center;
-  padding-bottom:80px}
+/* ═══════════════════════ PAGES ═══════════════════════ */
+.page{display:none;padding-top:76px;min-height:100vh;position:relative;z-index:2}
+.page.active{display:flex;flex-direction:column;align-items:center;padding-bottom:80px}
 
-/* ════════════════════════════════════
-   FORM PAGE
-════════════════════════════════════ */
-.form-wrap{width:100%;max-width:760px;padding:32px 16px 0}
-.header{text-align:center;margin-bottom:36px;animation:fadeDown .7s cubic-bezier(.22,1,.36,1) both}
+/* ═══════════════════════ FORM PAGE ═══════════════════════ */
+.form-wrap{width:100%;max-width:760px;padding:28px 16px 0}
+.header{text-align:center;margin-bottom:32px;animation:fadeDown .7s cubic-bezier(.22,1,.36,1) both}
 .lab-badge{display:inline-flex;align-items:center;gap:8px;
   background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.22);
   backdrop-filter:blur(8px);border-radius:999px;padding:7px 18px;
   font-family:var(--mono);font-size:10.5px;color:var(--accent);
-  letter-spacing:2.5px;text-transform:uppercase;margin-bottom:20px}
+  letter-spacing:2.5px;text-transform:uppercase;margin-bottom:18px}
 .lab-badge::before{content:'';width:7px;height:7px;border-radius:50%;
   background:var(--accent);box-shadow:0 0 10px var(--accent);animation:pulse 2s infinite}
-h1{font-size:28px;font-weight:700;letter-spacing:-.8px;line-height:1.15;margin-bottom:8px;
+h1{font-size:26px;font-weight:700;letter-spacing:-.8px;line-height:1.15;margin-bottom:8px;
   background:linear-gradient(135deg,#e0f2fe,#7dd3fc 50%,#38bdf8);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .subtitle{color:var(--muted2);font-size:13px}
-
 .card{background:rgba(13,17,23,0.78);border:1px solid rgba(255,255,255,0.07);
-  border-radius:20px;padding:32px 36px;backdrop-filter:blur(24px);
+  border-radius:20px;padding:28px 32px;backdrop-filter:blur(24px);
   box-shadow:0 32px 80px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,0.05);
   animation:fadeUp .8s cubic-bezier(.22,1,.36,1) both;animation-delay:.1s}
-
 .section-title{font-family:var(--mono);font-size:10px;letter-spacing:3px;
-  text-transform:uppercase;color:var(--accent);margin-bottom:18px;padding-bottom:10px;
+  text-transform:uppercase;color:var(--accent);margin-bottom:16px;padding-bottom:10px;
   border-bottom:1px solid rgba(59,130,246,0.15);display:flex;align-items:center;gap:10px}
 .section-title .num{background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.25);
   border-radius:5px;padding:2px 7px;font-size:10px}
-.section-title::after{content:'';flex:1;height:1px;
-  background:linear-gradient(to right,rgba(59,130,246,0.15),transparent)}
-.divider{height:1px;background:rgba(255,255,255,0.05);margin:26px 0}
-
-.field{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.section-title::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(59,130,246,0.15),transparent)}
+.divider{height:1px;background:rgba(255,255,255,0.05);margin:24px 0}
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 label{font-size:11px;font-weight:600;color:var(--muted2);letter-spacing:.4px;text-transform:uppercase}
 label .req{color:var(--accent);margin-left:2px}
 input,select,textarea{background:var(--surface2);border:1px solid var(--border);
@@ -110,29 +114,29 @@ select{cursor:pointer;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:right 14px center;padding-right:38px}
 select option{background:#161b26}
-textarea{resize:vertical;min-height:80px}
+textarea{resize:vertical;min-height:78px}
 .error-msg{color:var(--red);font-size:11px;font-family:var(--mono);margin-top:3px;display:none}
 .field.error input,.field.error select{border-color:rgba(244,63,94,.6);box-shadow:0 0 0 3px rgba(244,63,94,0.1)}
 .field.error .error-msg{display:block}
 
 /* Cassettes */
-.cassette-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.cassette-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .add-btn{background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.25);
   color:var(--accent);border-radius:8px;padding:6px 14px;font-size:11px;
   font-family:var(--mono);cursor:pointer;transition:all .2s;letter-spacing:1px}
 .add-btn:hover{background:rgba(59,130,246,0.2);border-color:rgba(59,130,246,0.5)}
-.cassette-list{display:flex;flex-direction:column;gap:10px}
+.cassette-list{display:flex;flex-direction:column;gap:8px}
 .cassette-item{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:center;
   background:rgba(59,130,246,0.04);border:1px solid rgba(59,130,246,0.12);
-  border-radius:10px;padding:12px;animation:fadeIn .3s ease both}
+  border-radius:10px;padding:10px;animation:fadeIn .3s ease both}
 .cassette-num{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:1px}
 .remove-btn{background:rgba(244,63,94,0.08);border:1px solid rgba(244,63,94,0.2);
-  color:var(--red);border-radius:7px;width:32px;height:32px;
+  color:var(--red);border-radius:7px;width:30px;height:30px;
   display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-size:17px;transition:all .2s;flex-shrink:0}
+  cursor:pointer;font-size:16px;transition:all .2s;flex-shrink:0}
 .remove-btn:hover{background:rgba(244,63,94,0.2);border-color:rgba(244,63,94,.5)}
 
-/* Marker box */
+/* Marker boxes */
 .marker-box{background:rgba(8,12,20,0.6);border:1px solid rgba(255,255,255,0.07);
   border-radius:14px;padding:16px;margin-top:4px}
 .ss-box{border-color:rgba(234,179,8,0.15)}
@@ -143,10 +147,8 @@ textarea{resize:vertical;min-height:80px}
 .tab.active,.tab:hover{background:rgba(59,130,246,0.14);border-color:rgba(59,130,246,0.35);color:var(--accent)}
 .ss-tabs .tab.active,.ss-tabs .tab:hover{background:rgba(234,179,8,0.12);border-color:rgba(234,179,8,0.38);color:var(--gold)}
 .inner-search{margin-bottom:10px}
-.inner-search input{background:var(--surface3);border:1px solid var(--border);
-  border-radius:8px;font-size:13px;padding:9px 13px}
-.markers-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;
-  max-height:240px;overflow-y:auto;padding-right:4px}
+.inner-search input{background:var(--surface3);border:1px solid var(--border);border-radius:8px;font-size:13px;padding:9px 13px}
+.markers-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-height:240px;overflow-y:auto;padding-right:4px}
 .markers-grid::-webkit-scrollbar{width:4px}
 .markers-grid::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
 .marker-chip{background:var(--surface3);border:1px solid var(--border);border-radius:8px;
@@ -162,45 +164,26 @@ textarea{resize:vertical;min-height:80px}
 .sel-bar .count span{color:var(--accent)}
 .ss-count span{color:var(--gold)}
 .selected-tags{display:flex;flex-wrap:wrap;gap:5px;flex:1}
-.tag{background:rgba(59,130,246,0.14);border:1px solid rgba(59,130,246,0.3);
-  color:#93c5fd;border-radius:999px;padding:3px 10px;
-  font-size:10.5px;font-family:var(--mono);
+.tag{background:rgba(59,130,246,0.14);border:1px solid rgba(59,130,246,0.3);color:#93c5fd;
+  border-radius:999px;padding:3px 10px;font-size:10.5px;font-family:var(--mono);
   display:flex;align-items:center;gap:5px;animation:fadeIn .2s ease both}
 .tag button{background:none;border:none;color:rgba(147,197,253,.5);cursor:pointer;font-size:13px;line-height:1;padding:0}
 .tag button:hover{color:var(--red)}
 .ss-tag{background:rgba(234,179,8,0.1);border-color:rgba(234,179,8,0.3);color:#fde68a}
 .ss-tag button{color:rgba(253,230,138,.4)}
 .empty-hint{color:#334155;font-size:11px;font-family:var(--mono)}
-
-/* Submit button */
-.submit-btn{width:100%;margin-top:20px;
-  background:linear-gradient(135deg,var(--accent2),var(--accent));
-  color:#fff;font-family:var(--sans);font-weight:700;font-size:15px;
-  border:none;border-radius:12px;padding:17px;cursor:pointer;transition:all .25s;
+.submit-btn{width:100%;margin-top:18px;background:linear-gradient(135deg,var(--accent2),var(--accent));
+  color:#fff;font-family:var(--sans);font-weight:700;font-size:15px;border:none;
+  border-radius:12px;padding:16px;cursor:pointer;transition:all .25s;
   display:flex;align-items:center;justify-content:center;gap:9px;
   box-shadow:0 4px 20px rgba(59,130,246,0.25)}
 .submit-btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(59,130,246,0.4)}
 .submit-btn:active{transform:translateY(0)}
 
-/* Success toast */
-.toast{
-  position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);
-  background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.4);
-  backdrop-filter:blur(12px);color:#86efac;border-radius:12px;
-  padding:14px 24px;font-family:var(--mono);font-size:13px;letter-spacing:.5px;
-  z-index:999;transition:transform .4s cubic-bezier(.22,1,.36,1);
-  display:flex;align-items:center;gap:10px
-}
-.toast.show{transform:translateX(-50%) translateY(0)}
-
-/* ════════════════════════════════════
-   DASHBOARD PAGE
-════════════════════════════════════ */
-.dash-wrap{width:100%;max-width:1100px;padding:32px 16px 0}
-
-.dash-header{display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:28px;flex-wrap:wrap;gap:14px}
-.dash-title{font-size:22px;font-weight:700;letter-spacing:-.5px;
+/* ═══════════════════════ DASHBOARD PAGE ═══════════════════════ */
+.dash-wrap{width:100%;max-width:1100px;padding:28px 16px 0}
+.dash-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:14px}
+.dash-title{font-size:20px;font-weight:700;letter-spacing:-.5px;
   background:linear-gradient(135deg,#e0f2fe,#38bdf8);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .dash-stats{display:flex;gap:10px;flex-wrap:wrap}
@@ -208,12 +191,10 @@ textarea{resize:vertical;min-height:80px}
   border-radius:10px;padding:10px 18px;text-align:center;backdrop-filter:blur(10px)}
 .stat-chip .val{font-size:22px;font-weight:700;color:var(--accent);font-family:var(--mono)}
 .stat-chip .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-family:var(--mono)}
-
-.dash-toolbar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
-.search-input{flex:1;min-width:200px;background:rgba(13,17,23,0.7);
-  border:1px solid var(--border);border-radius:10px;color:var(--text);
-  font-family:var(--sans);font-size:13px;padding:10px 14px;outline:none;
-  backdrop-filter:blur(10px)}
+.dash-toolbar{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.search-input{flex:1;min-width:180px;background:rgba(13,17,23,0.7);border:1px solid var(--border);
+  border-radius:10px;color:var(--text);font-family:var(--sans);font-size:13px;
+  padding:10px 14px;outline:none;backdrop-filter:blur(10px)}
 .search-input:focus{border-color:rgba(59,130,246,0.5);box-shadow:0 0 0 3px rgba(59,130,246,0.1)}
 .search-input::placeholder{color:#334155}
 .filter-select{background:rgba(13,17,23,0.7);border:1px solid var(--border);
@@ -222,121 +203,104 @@ textarea{resize:vertical;min-height:80px}
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:right 12px center;-webkit-appearance:none}
 .filter-select option{background:#161b26}
-.clear-all-btn{background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.25);
-  color:var(--red);border-radius:10px;padding:10px 16px;font-size:12px;
-  font-family:var(--mono);cursor:pointer;transition:all .2s;white-space:nowrap}
-.clear-all-btn:hover{background:rgba(244,63,94,0.2)}
-.export-btn{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);
-  color:var(--green);border-radius:10px;padding:10px 16px;font-size:12px;
-  font-family:var(--mono);cursor:pointer;transition:all .2s;white-space:nowrap}
-.export-btn:hover{background:rgba(34,197,94,0.2)}
+.tool-btn{border-radius:10px;padding:10px 14px;font-size:12px;font-family:var(--mono);
+  cursor:pointer;transition:all .2s;white-space:nowrap;border:1px solid}
+.btn-csv{background:rgba(34,197,94,0.1);border-color:rgba(34,197,94,0.25);color:var(--green)}
+.btn-csv:hover{background:rgba(34,197,94,0.2)}
+.btn-word{background:rgba(59,130,246,0.1);border-color:rgba(59,130,246,0.25);color:#93c5fd}
+.btn-word:hover{background:rgba(59,130,246,0.2)}
+.btn-backup{background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.25);color:#c4b5fd}
+.btn-backup:hover{background:rgba(139,92,246,0.2)}
+.btn-print{background:rgba(234,179,8,0.1);border-color:rgba(234,179,8,0.25);color:var(--gold)}
+.btn-print:hover{background:rgba(234,179,8,0.2)}
+.btn-danger{background:rgba(244,63,94,0.1);border-color:rgba(244,63,94,0.25);color:var(--red)}
+.btn-danger:hover{background:rgba(244,63,94,0.2)}
 
 /* Table */
 .table-wrap{background:rgba(13,17,23,0.75);border:1px solid rgba(255,255,255,0.07);
   border-radius:16px;overflow:hidden;backdrop-filter:blur(24px)}
 table{width:100%;border-collapse:collapse}
 thead{background:rgba(59,130,246,0.08);border-bottom:1px solid rgba(59,130,246,0.15)}
-th{padding:13px 16px;text-align:left;font-family:var(--mono);font-size:10px;
+th{padding:12px 14px;text-align:left;font-family:var(--mono);font-size:10px;
   letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:500}
-td{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.04);
-  font-size:13px;color:var(--muted2);vertical-align:top}
+td{padding:13px 14px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;color:var(--muted2);vertical-align:top}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:rgba(59,130,246,0.04)}
 .td-main{color:var(--text);font-weight:500}
 .td-case{font-family:var(--mono);font-size:11px;color:var(--accent)}
 .td-time{font-family:var(--mono);font-size:10.5px;color:var(--muted)}
-.pills{display:flex;flex-wrap:wrap;gap:4px;max-width:280px}
+.pills{display:flex;flex-wrap:wrap;gap:4px;max-width:260px}
 .pill{background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.25);
   color:#93c5fd;border-radius:999px;padding:2px 8px;font-size:10px;font-family:var(--mono)}
 .pill-ss{background:rgba(234,179,8,0.1);border-color:rgba(234,179,8,0.25);color:#fde68a}
 .pill-more{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1);color:var(--muted)}
-.del-btn{background:rgba(244,63,94,0.08);border:1px solid rgba(244,63,94,0.18);
-  color:var(--red);border-radius:7px;padding:5px 10px;font-size:11px;font-family:var(--mono);
-  cursor:pointer;transition:all .2s;white-space:nowrap}
-.del-btn:hover{background:rgba(244,63,94,0.2)}
-.view-btn{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);
-  color:var(--accent);border-radius:7px;padding:5px 10px;font-size:11px;font-family:var(--mono);
-  cursor:pointer;transition:all .2s;margin-right:6px;white-space:nowrap}
-.view-btn:hover{background:rgba(59,130,246,0.18)}
+.act-btn{border-radius:7px;padding:5px 10px;font-size:11px;font-family:var(--mono);
+  cursor:pointer;transition:all .2s;white-space:nowrap;margin-right:4px;border:1px solid}
+.btn-view{background:rgba(59,130,246,0.08);border-color:rgba(59,130,246,0.2);color:var(--accent)}
+.btn-view:hover{background:rgba(59,130,246,0.18)}
+.btn-del{background:rgba(244,63,94,0.08);border-color:rgba(244,63,94,0.2);color:var(--red)}
+.btn-del:hover{background:rgba(244,63,94,0.2)}
 .empty-state{text-align:center;padding:70px 20px}
 .empty-state .icon{font-size:48px;margin-bottom:16px;opacity:.3}
 .empty-state p{color:var(--muted);font-family:var(--mono);font-size:13px;letter-spacing:1px}
 
-/* Modal */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);
-  z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.open{display:flex}
-.modal{background:#0d1117;border:1px solid rgba(255,255,255,0.1);border-radius:18px;
-  width:100%;max-width:560px;max-height:85vh;overflow-y:auto;
-  box-shadow:0 40px 100px rgba(0,0,0,.8)}
-.modal-head{padding:22px 26px 18px;border-bottom:1px solid rgba(255,255,255,0.07);
-  display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;
-  background:#0d1117;z-index:1}
-.modal-head h3{font-size:16px;font-weight:600;color:var(--text)}
-.modal-close{background:rgba(255,255,255,0.07);border:none;color:var(--muted);
-  border-radius:7px;width:32px;height:32px;cursor:pointer;font-size:18px;
-  display:flex;align-items:center;justify-content:center;transition:all .2s}
-.modal-close:hover{background:rgba(244,63,94,0.15);color:var(--red)}
-.modal-body{padding:22px 26px}
-.modal-row{display:flex;gap:8px;margin-bottom:14px;align-items:baseline}
-.modal-lbl{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;
-  text-transform:uppercase;color:var(--muted);min-width:100px}
-.modal-val{font-size:13px;color:var(--text);flex:1}
-.modal-val.pills{flex-direction:row}
-
-/* Animations */
-/* ── Lock screen ── */
-.lock-overlay{position:fixed;inset:0;z-index:500;
-  background:rgba(4,7,14,0.97);backdrop-filter:blur(20px);
-  display:flex;align-items:center;justify-content:center;padding:20px}
-.lock-box{background:rgba(13,17,23,0.95);border:1px solid rgba(255,255,255,0.08);
-  border-radius:20px;padding:40px 36px;width:100%;max-width:360px;text-align:center;
-  box-shadow:0 40px 100px rgba(0,0,0,.8)}
-.lock-icon{font-size:40px;margin-bottom:16px}
-.lock-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px}
-.lock-sub{font-size:12px;color:var(--muted);font-family:var(--mono);margin-bottom:24px;letter-spacing:.5px}
-.lock-input{background:var(--surface2);border:1px solid var(--border);border-radius:10px;
-  color:var(--text);font-size:18px;padding:14px;width:100%;outline:none;
-  text-align:center;letter-spacing:6px;font-family:var(--mono);margin-bottom:14px;
-  -webkit-appearance:none}
-.lock-input:focus{border-color:rgba(59,130,246,0.6);box-shadow:0 0 0 3px rgba(59,130,246,0.1)}
-.lock-btn{width:100%;background:linear-gradient(135deg,var(--accent2),var(--accent));
-  color:#fff;font-family:var(--sans);font-weight:700;font-size:14px;
-  border:none;border-radius:10px;padding:14px;cursor:pointer;transition:all .2s}
-.lock-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(59,130,246,0.35)}
-.lock-err{color:var(--red);font-size:12px;font-family:var(--mono);margin-top:10px;
-  min-height:18px;letter-spacing:.5px}
-.lock-hint{margin-top:16px;font-size:11px;color:#334155;font-family:var(--mono)}
-
-/* ── Expiry badge ── */
+/* Expiry badges */
 .exp-badge{display:inline-flex;align-items:center;gap:5px;
   border-radius:999px;padding:3px 10px;font-size:10px;font-family:var(--mono);letter-spacing:.5px}
-.exp-ok{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);color:#86efac}
+.exp-ok  {background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);color:#86efac}
 .exp-warn{background:rgba(234,179,8,0.1);border:1px solid rgba(234,179,8,0.3);color:#fde68a}
 .exp-dead{background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.3);color:#fda4af}
 
-/* ── Print ── */
+/* ═══════════════════════ MODAL ═══════════════════════ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);
+  z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:#0d1117;border:1px solid rgba(255,255,255,0.1);border-radius:18px;
+  width:100%;max-width:560px;max-height:88vh;overflow-y:auto;
+  box-shadow:0 40px 100px rgba(0,0,0,.8)}
+.modal-head{padding:20px 24px 16px;border-bottom:1px solid rgba(255,255,255,0.07);
+  display:flex;justify-content:space-between;align-items:center;
+  position:sticky;top:0;background:#0d1117;z-index:1}
+.modal-head h3{font-size:15px;font-weight:600;color:var(--text)}
+.modal-close{background:rgba(255,255,255,0.07);border:none;color:var(--muted);
+  border-radius:7px;width:30px;height:30px;cursor:pointer;font-size:18px;
+  display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal-close:hover{background:rgba(244,63,94,0.15);color:var(--red)}
+.modal-body{padding:20px 24px}
+.modal-row{display:flex;gap:8px;margin-bottom:13px;align-items:baseline}
+.modal-lbl{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--muted);min-width:100px}
+.modal-val{font-size:13px;color:var(--text);flex:1;line-height:1.6}
+
+/* Toast */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);
+  background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.4);
+  backdrop-filter:blur(12px);color:#86efac;border-radius:12px;padding:13px 22px;
+  font-family:var(--mono);font-size:12px;letter-spacing:.5px;z-index:999;
+  transition:transform .4s cubic-bezier(.22,1,.36,1);display:flex;align-items:center;gap:10px}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* Print */
+.print-header{display:none}
 @media print{
-  .bg-wrap,.noise,.nav,.dash-toolbar,.modal-overlay,.toast,
-  .del-btn,.view-btn,.export-btn,.clear-all-btn{display:none!important}
+  .bg-wrap,.nav,.dash-toolbar,.modal-overlay,.toast,
+  .act-btn,.btn-csv,.btn-word,.btn-backup,.btn-print,.btn-danger,
+  #page-form,#lock-overlay{display:none!important}
   body{background:#fff!important;color:#000!important;padding:0!important}
   .page{display:block!important;padding-top:0!important}
-  #page-form{display:none!important}
   #page-dash{display:block!important}
   .table-wrap{border:1px solid #ccc!important;border-radius:0!important;box-shadow:none!important;background:#fff!important}
-  table{font-size:11px!important}
-  th{background:#f0f4ff!important;color:#1e3a8a!important;border-bottom:1px solid #ccc!important}
+  table{font-size:10px!important}
+  th{background:#e8f0fe!important;color:#1e3a8a!important;border-bottom:1px solid #ccc!important}
   td{color:#333!important;border-bottom:1px solid #eee!important}
   .pill{background:#e8f0fe!important;border:1px solid #93c5fd!important;color:#1e3a8a!important}
   .pill-ss{background:#fef9c3!important;border-color:#fde68a!important;color:#92400e!important}
-  .dash-stats{display:none!important}
-  .print-header{display:block!important}
+  .print-header{display:block!important;text-align:center;padding:14px 0 20px;border-bottom:2px solid #1e3a8a;margin-bottom:18px}
+  .print-header h2{font-size:16px;color:#1e3a8a;font-weight:700}
+  .print-header p{font-size:11px;color:#64748b;margin-top:4px}
 }
-.print-header{display:none;text-align:center;padding:16px 0 24px;
-  border-bottom:2px solid #1e3a8a;margin-bottom:20px}
-.print-header h2{font-size:18px;color:#1e3a8a;font-weight:700}
-.print-header p{font-size:12px;color:#64748b;margin-top:4px}
 
+/* Animations */
 @keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeUp  {from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn  {from{opacity:0;transform:scale(.93)}       to{opacity:1;transform:scale(1)}}
@@ -346,13 +310,9 @@ tr:hover td{background:rgba(59,130,246,0.04)}
 @keyframes orbMove3{from{transform:translate(-50%,-50%) scale(1)} to{transform:translate(-50%,-50%) scale(1.2)}}
 
 @media(max-width:600px){
-  .row{grid-template-columns:1fr}
-  .markers-grid{grid-template-columns:repeat(3,1fr)}
-  .card{padding:22px 16px}
-  h1{font-size:22px}
-  th:nth-child(4),td:nth-child(4),
-  th:nth-child(5),td:nth-child(5){display:none}
-  .nav-title{display:none}
+  .row{grid-template-columns:1fr}.markers-grid{grid-template-columns:repeat(3,1fr)}
+  .card{padding:20px 16px}h1{font-size:20px}.nav-title{display:none}
+  th:nth-child(4),td:nth-child(4),th:nth-child(5),td:nth-child(5){display:none}
 }
 </style>
 </head>
@@ -364,53 +324,52 @@ tr:hover td{background:rgba(59,130,246,0.04)}
   <div class="bg-orb orb3"></div>
 </div>
 
-<!-- Lock Screen -->
+<!-- ══════════ LOCK SCREEN ══════════ -->
 <div class="lock-overlay" id="lock-overlay">
   <div class="lock-box">
     <div class="lock-icon">🔬</div>
     <div class="lock-title">Histopathology Lab System</div>
-    <div class="lock-sub">Jordan University Hospital</div>
+    <div class="lock-sub">Jordan University Hospital · Pathology Dept.</div>
     <input class="lock-input" type="password" id="lock-pin" placeholder="••••" maxlength="6"
       onkeydown="if(event.key==='Enter')unlockDash()">
     <button class="lock-btn" onclick="unlockDash()">Enter Dashboard</button>
     <div class="lock-err" id="lock-err"></div>
-    <div class="lock-hint">Enter PIN to access • Default: 1234</div>
+    <div class="lock-hint">Default PIN: 1234 &nbsp;·&nbsp; Change via 🔑 PIN button</div>
   </div>
 </div>
 
-<!-- NAV -->
+<!-- ══════════ NAV ══════════ -->
 <nav class="nav">
   <div class="nav-brand">
     <div class="nav-dot"></div>
     <span class="nav-title">Histopath Lab · JUH</span>
   </div>
-  <div class="nav-tabs">
+  <div class="nav-tabs" id="nav-tabs">
     <button class="nav-tab active" onclick="showPage('form',this)">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
       New Request
     </button>
     <button class="nav-tab" onclick="showPage('dash',this)" id="dash-nav-btn">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
       Dashboard
       <span class="badge" id="nav-badge">0</span>
     </button>
   </div>
 </nav>
 
-<!-- ══════════════════════════════
+<!-- ══════════════════════════════════════
      FORM PAGE
-══════════════════════════════ -->
+══════════════════════════════════════ -->
 <div class="page active" id="page-form">
 <div class="form-wrap">
-
   <div class="header">
     <div class="lab-badge">Histopathology Laboratory</div>
     <h1>IHC &amp; Special Stains Request</h1>
     <p class="subtitle">Jordan University Hospital &nbsp;&middot;&nbsp; Pathology Department</p>
   </div>
-
   <div class="card">
 
+    <!-- 01 Physician -->
     <div class="section-title"><span class="num">01</span> Requesting Physician</div>
     <div class="field" id="f-doc">
       <label>Physician Name <span class="req">*</span></label>
@@ -420,13 +379,14 @@ tr:hover td{background:rgba(59,130,246,0.04)}
 
     <div class="divider"></div>
 
+    <!-- 02 Patient -->
     <div class="section-title"><span class="num">02</span> Patient Information</div>
     <div class="field" id="f-pname">
       <label>Patient Full Name <span class="req">*</span></label>
       <input type="text" id="patient-name" placeholder="e.g. Mohammad Ali Hassan">
       <span class="error-msg">Required</span>
     </div>
-    <div class="row" style="margin-bottom:16px">
+    <div class="row" style="margin-bottom:14px">
       <div class="field" id="f-caseid">
         <label>Case Number <span class="req">*</span></label>
         <input type="text" id="case-id" placeholder="e.g. S-2025-04821">
@@ -445,6 +405,7 @@ tr:hover td{background:rgba(59,130,246,0.04)}
 
     <div class="divider"></div>
 
+    <!-- 03 IHC -->
     <div class="section-title"><span class="num">03</span> Immunohistochemistry (IHC)</div>
     <div class="marker-box">
       <div class="tabs" id="ihc-tabs">
@@ -473,6 +434,7 @@ tr:hover td{background:rgba(59,130,246,0.04)}
 
     <div class="divider"></div>
 
+    <!-- 04 Special Stains -->
     <div class="section-title"><span class="num">04</span> Special Stains</div>
     <div class="marker-box ss-box">
       <div class="tabs ss-tabs" id="ss-tabs">
@@ -496,6 +458,7 @@ tr:hover td{background:rgba(59,130,246,0.04)}
 
     <div class="divider"></div>
 
+    <!-- 05 Notes -->
     <div class="section-title"><span class="num">05</span> Clinical Notes</div>
     <div class="field">
       <label>Clinical Information / Differential Diagnosis</label>
@@ -503,24 +466,28 @@ tr:hover td{background:rgba(59,130,246,0.04)}
     </div>
 
     <button class="submit-btn" onclick="submitRequest()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
-      Submit Request
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+      Submit &amp; Save Request
     </button>
-
   </div>
 </div>
 </div>
 
-<!-- ══════════════════════════════
+<!-- ══════════════════════════════════════
      DASHBOARD PAGE
-══════════════════════════════ -->
+══════════════════════════════════════ -->
 <div class="page" id="page-dash">
 <div class="dash-wrap">
+
+  <div class="print-header">
+    <h2>IHC &amp; Special Stains — Requests Report</h2>
+    <p>Jordan University Hospital &nbsp;·&nbsp; Histopathology Laboratory &nbsp;·&nbsp; Printed: <span id="print-date"></span></p>
+  </div>
 
   <div class="dash-header">
     <div>
       <div class="dash-title">Requests Dashboard</div>
-      <div style="color:var(--muted);font-size:12px;margin-top:4px;font-family:var(--mono)">Jordan University Hospital · Histopathology Lab</div>
+      <div style="color:var(--muted);font-size:11px;margin-top:3px;font-family:var(--mono)">Jordan University Hospital · Histopathology Lab</div>
     </div>
     <div class="dash-stats">
       <div class="stat-chip"><div class="val" id="stat-total">0</div><div class="lbl">Total</div></div>
@@ -530,38 +497,28 @@ tr:hover td{background:rgba(59,130,246,0.04)}
     </div>
   </div>
 
-  <div class="print-header">
-    <h2>Histopathology Lab — IHC & Special Stains Requests</h2>
-    <p>Jordan University Hospital &nbsp;·&nbsp; Printed: <span id="print-date"></span></p>
-  </div>
-
   <div class="dash-toolbar">
-    <input class="search-input" type="text" id="dash-search" placeholder="Search by patient, case, physician..." oninput="renderDash()">
+    <input class="search-input" type="text" id="dash-search" placeholder="Search patient, case, physician..." oninput="renderDash()">
     <select class="filter-select" id="dash-filter" onchange="renderDash()">
       <option value="all">All Types</option>
       <option value="ihc">IHC Only</option>
       <option value="ss">Special Stains Only</option>
       <option value="both">Both</option>
     </select>
-    <button class="export-btn" onclick="exportCSV()">⬇ Export CSV</button>
-    <button class="export-btn" style="background:rgba(37,99,235,0.1);border-color:rgba(37,99,235,0.3);color:#93c5fd" onclick="exportWord()">📄 Export Word</button>
-    <button class="export-btn" style="background:rgba(59,130,246,0.1);border-color:rgba(59,130,246,0.25);color:var(--accent)" onclick="backupJSON()">💾 Backup</button>
-    <button class="export-btn" style="background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.25);color:#a78bfa" onclick="printDash()">🖨️ Print</button>
-    <button class="clear-all-btn" onclick="clearAllRequests()">🗑 Clear All</button>
+    <button class="tool-btn btn-csv"    onclick="exportCSV()">⬇ CSV</button>
+    <button class="tool-btn btn-word"   onclick="exportWord()">📄 Word</button>
+    <button class="tool-btn btn-backup" onclick="backupJSON()">💾 Backup</button>
+    <button class="tool-btn btn-print"  onclick="printDash()">🖨️ Print</button>
+    <button class="tool-btn btn-danger" onclick="clearAllRequests()">🗑 Clear All</button>
   </div>
 
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th>#</th>
-          <th>Patient</th>
-          <th>Physician</th>
-          <th>IHC Markers</th>
-          <th>Special Stains</th>
-          <th>Date & Time</th>
-          <th>Status</th>
-          <th>Actions</th>
+          <th>#</th><th>Patient / Case</th><th>Physician</th>
+          <th>IHC Markers</th><th>Special Stains</th>
+          <th>Date &amp; Time</th><th>Status</th><th>Actions</th>
         </tr>
       </thead>
       <tbody id="dash-tbody"></tbody>
@@ -569,14 +526,14 @@ tr:hover td{background:rgba(59,130,246,0.04)}
     <div class="empty-state" id="dash-empty" style="display:none">
       <div class="icon">🔬</div>
       <p>NO REQUESTS YET</p>
-      <p style="margin-top:8px;font-size:11px">Submit a request from the form to see it here</p>
+      <p style="margin-top:8px;font-size:11px">Submit a request to see it here</p>
     </div>
   </div>
 
 </div>
 </div>
 
-<!-- Modal -->
+<!-- ══════════ REQUEST DETAIL MODAL ══════════ -->
 <div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <div class="modal-head">
@@ -587,15 +544,53 @@ tr:hover td{background:rgba(59,130,246,0.04)}
   </div>
 </div>
 
-<!-- Toast -->
+<!-- ══════════ WORD EXPORT MODAL ══════════ -->
+<div class="modal-overlay" id="word-modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-head">
+      <h3>📄 Export to Word (.docx)</h3>
+      <button class="modal-close" onclick="document.getElementById('word-modal').classList.remove('open')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--muted2);font-size:13px;margin-bottom:18px;line-height:1.7">
+        لتوليد ملف Word حقيقي بتنسيق كامل، اتبع هذه الخطوات:
+      </p>
+      <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:14px;margin-bottom:12px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:2px;margin-bottom:10px">STEP 1 — تحميل البيانات</div>
+        <button onclick="exportWordBackupAndShow()" style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:#fff;border:none;border-radius:8px;padding:11px 18px;font-size:13px;font-weight:700;cursor:pointer;width:100%">
+          💾 تحميل ملف الطلبات (JSON)
+        </button>
+      </div>
+      <div style="background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);border-radius:10px;padding:14px;margin-bottom:12px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--green);letter-spacing:2px;margin-bottom:8px">STEP 2 — تثبيت (مرة واحدة فقط)</div>
+        <div style="background:#060910;border-radius:6px;padding:10px 14px;font-family:var(--mono);font-size:12px;color:#86efac">pip install python-docx</div>
+      </div>
+      <div style="background:rgba(234,179,8,0.06);border:1px solid rgba(234,179,8,0.2);border-radius:10px;padding:14px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:8px">STEP 3 — تشغيل السكريبت</div>
+        <div style="background:#060910;border-radius:6px;padding:10px 14px;font-family:var(--mono);font-size:12px;color:#fde68a">python3 ihc_to_word.py IHC_Backup_xxxx.json</div>
+        <p style="font-size:11px;color:var(--muted);margin-top:8px">
+          ✓ يولّد ملف <b style="color:var(--text)">IHC_Report_YYYY-MM-DD.docx</b>
+        </p>
+      </div>
+      <p style="font-size:11px;color:#334155;font-family:var(--mono);margin-top:14px;text-align:center">
+        حمّل سكريبت Python من الـ repo · Python 3.8+ required
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TOAST ══════════ -->
 <div class="toast" id="toast">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-  <span id="toast-msg">Request saved successfully!</span>
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-msg"></span>
 </div>
 
 <script>
-// ════════════════════ DATA ════════════════════
+// ═══════════════════════════════════════════
+//  IHC MARKERS DATABASE
+// ═══════════════════════════════════════════
 const IHC_MARKERS=[
+  // Lymphoma
   {n:'CD1a',c:'lymphoma'},{n:'CD2',c:'lymphoma'},{n:'CD3',c:'lymphoma'},{n:'CD4',c:'lymphoma'},
   {n:'CD5',c:'lymphoma'},{n:'CD7',c:'lymphoma'},{n:'CD8',c:'lymphoma'},{n:'CD10',c:'lymphoma'},
   {n:'CD15',c:'lymphoma'},{n:'CD19',c:'lymphoma'},{n:'CD20',c:'lymphoma'},{n:'CD21',c:'lymphoma'},
@@ -607,6 +602,7 @@ const IHC_MARKERS=[
   {n:'Kappa',c:'lymphoma'},{n:'Lambda',c:'lymphoma'},{n:'Cyclin D1',c:'lymphoma'},
   {n:'LEF1',c:'lymphoma'},{n:'SOX11',c:'lymphoma'},{n:'IRF4',c:'lymphoma'},{n:'MYC',c:'lymphoma'},
   {n:'EBER (ISH)',c:'lymphoma'},
+  // Carcinoma
   {n:'AE1/AE3',c:'carcinoma'},{n:'CAM5.2',c:'carcinoma'},{n:'CK7',c:'carcinoma'},
   {n:'CK20',c:'carcinoma'},{n:'CK5/6',c:'carcinoma'},{n:'CK14',c:'carcinoma'},
   {n:'CK17',c:'carcinoma'},{n:'CK19',c:'carcinoma'},{n:'CK MNF116',c:'carcinoma'},
@@ -615,10 +611,12 @@ const IHC_MARKERS=[
   {n:'GATA3',c:'carcinoma'},{n:'Uroplakin II',c:'carcinoma'},{n:'Uroplakin III',c:'carcinoma'},
   {n:'SATB2',c:'carcinoma'},{n:'Villin',c:'carcinoma'},{n:'MOC-31',c:'carcinoma'},
   {n:'BerEp4',c:'carcinoma'},{n:'EMA',c:'carcinoma'},{n:'CEA',c:'carcinoma'},{n:'CA19-9',c:'carcinoma'},
+  // Neuroendocrine
   {n:'Synaptophysin',c:'neuroendo'},{n:'Chromogranin A',c:'neuroendo'},
   {n:'CD56',c:'neuroendo'},{n:'NSE',c:'neuroendo'},{n:'INSM1',c:'neuroendo'},
   {n:'Somatostatin',c:'neuroendo'},{n:'Glucagon',c:'neuroendo'},{n:'Insulin',c:'neuroendo'},
   {n:'Gastrin',c:'neuroendo'},{n:'PDX1',c:'neuroendo'},{n:'SSTR2',c:'neuroendo'},
+  // Mesenchymal
   {n:'Vimentin',c:'mesenchymal'},{n:'SMA',c:'mesenchymal'},{n:'Desmin',c:'mesenchymal'},
   {n:'CD34',c:'mesenchymal'},{n:'CD99',c:'mesenchymal'},{n:'CD31',c:'mesenchymal'},
   {n:'DOG1',c:'mesenchymal'},{n:'MDM2',c:'mesenchymal'},{n:'STAT6',c:'mesenchymal'},
@@ -626,30 +624,42 @@ const IHC_MARKERS=[
   {n:'FLI1',c:'mesenchymal'},{n:'Calponin',c:'mesenchymal'},{n:'h-Caldesmon',c:'mesenchymal'},
   {n:'Myogenin',c:'mesenchymal'},{n:'MyoD1',c:'mesenchymal'},{n:'NKX2.2',c:'mesenchymal'},
   {n:'INI1/SMARCB1',c:'mesenchymal'},{n:'SMARCA4',c:'mesenchymal'},{n:'D2-40',c:'mesenchymal'},
+  // Melanoma
   {n:'HMB45',c:'melanoma'},{n:'Melan-A',c:'melanoma'},{n:'SOX10',c:'melanoma'},
   {n:'S100',c:'melanoma'},{n:'MITF',c:'melanoma'},{n:'PRAME',c:'melanoma'},{n:'PNL2',c:'melanoma'},
+  // Breast
   {n:'ER',c:'breast'},{n:'PR',c:'breast'},{n:'HER2',c:'breast'},{n:'Ki-67',c:'breast'},
   {n:'GCDFP-15',c:'breast'},{n:'Mammaglobin',c:'breast'},{n:'GATA3',c:'breast'},
   {n:'AR',c:'breast'},{n:'E-Cadherin',c:'breast'},{n:'p120',c:'breast'},{n:'CK5/6',c:'breast'},
+  // Gynecologic
   {n:'ER',c:'gyn'},{n:'PR',c:'gyn'},{n:'WT1',c:'gyn'},{n:'PAX8',c:'gyn'},
   {n:'Calretinin',c:'gyn'},{n:'Inhibin',c:'gyn'},{n:'p16',c:'gyn'},{n:'p53',c:'gyn'},
   {n:'Napsin A',c:'gyn'},{n:'Mesothelin',c:'gyn'},{n:'HNF1b',c:'gyn'},{n:'ARID1A',c:'gyn'},
+  // Prostate
   {n:'PSA',c:'prostate'},{n:'PSAP',c:'prostate'},{n:'NKX3.1',c:'prostate'},
   {n:'AMACR/p504s',c:'prostate'},{n:'p63',c:'prostate'},{n:'34bE12',c:'prostate'},
   {n:'ERG',c:'prostate'},{n:'AR',c:'prostate'},
+  // Germ Cell
   {n:'PLAP',c:'germ'},{n:'OCT3/4',c:'germ'},{n:'AFP',c:'germ'},{n:'hCG',c:'germ'},
   {n:'CD30',c:'germ'},{n:'SALL4',c:'germ'},{n:'GPC-3',c:'germ'},{n:'SOX17',c:'germ'},
+  // Liver/GI
   {n:'Hepar-1',c:'liver'},{n:'Arginase-1',c:'liver'},{n:'GPC-3',c:'liver'},
   {n:'CDX2',c:'liver'},{n:'SATB2',c:'liver'},{n:'Villin',c:'liver'},
   {n:'CK19',c:'liver'},{n:'CD10',c:'liver'},{n:'pCEA',c:'liver'},
+  // Proliferation
   {n:'Ki-67',c:'proliferation'},{n:'p53',c:'proliferation'},{n:'PHH3',c:'proliferation'},
   {n:'Cyclin D1',c:'proliferation'},{n:'p16',c:'proliferation'},{n:'PTEN',c:'proliferation'},
+  // Other
   {n:'Calretinin',c:'other'},{n:'Mesothelin',c:'other'},{n:'Thyroglobulin',c:'other'},
   {n:'TTR',c:'other'},{n:'MLH1',c:'other'},{n:'MSH2',c:'other'},
   {n:'MSH6',c:'other'},{n:'PMS2',c:'other'},{n:'PD-L1',c:'other'},
   {n:'IDH1',c:'other'},{n:'ATRX',c:'other'},{n:'EGFR',c:'other'},{n:'RCC',c:'other'},
   {n:'Tryptase',c:'other'},{n:'CD117',c:'other'},
 ];
+
+// ═══════════════════════════════════════════
+//  SPECIAL STAINS DATABASE
+// ═══════════════════════════════════════════
 const SS_MARKERS=[
   {n:'Masson Trichrome',c:'connective'},{n:'Van Gieson',c:'connective'},
   {n:'Elastic Van Gieson',c:'connective'},{n:'Weigert Elastic',c:'connective'},
@@ -677,17 +687,23 @@ const SS_MARKERS=[
   {n:'Chloracetate Esterase',c:'other'},{n:'Wright-Giemsa',c:'other'},{n:'Carbol Fuchsin',c:'other'},
 ];
 
+// ═══════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════
 function dedupe(a){const s=new Set(),o=[];a.forEach(m=>{const k=m.n+'_'+m.c;if(!s.has(k)){s.add(k);o.push(m)}});return o}
-const IHC=dedupe(IHC_MARKERS),SS=dedupe(SS_MARKERS);
-let selIHC=new Set(),selSS=new Set(),ihcCat='all',ihcSearch='',ssCat='all',ssSearch='';
+const IHC=dedupe(IHC_MARKERS), SS=dedupe(SS_MARKERS);
+let selIHC=new Set(), selSS=new Set();
+let ihcCat='all', ihcSearch='', ssCat='all', ssSearch='';
 
-// ════════════════════ FORM LOGIC ════════════════════
+// ═══════════════════════════════════════════
+//  IHC RENDER
+// ═══════════════════════════════════════════
 function renderIHC(){
-  const g=document.getElementById('ihc-grid');g.innerHTML='';
+  const g=document.getElementById('ihc-grid'); g.innerHTML='';
   IHC.filter(m=>(ihcCat==='all'||m.c===ihcCat)&&m.n.toLowerCase().includes(ihcSearch.toLowerCase()))
     .forEach(m=>{const d=document.createElement('div');
       d.className='marker-chip'+(selIHC.has(m.n)?' selected':'');
-      d.textContent=m.n;d.onclick=()=>togIHC(m.n,d);g.appendChild(d)});
+      d.textContent=m.n; d.onclick=()=>togIHC(m.n,d); g.appendChild(d)});
 }
 function togIHC(n,el){selIHC.has(n)?selIHC.delete(n):selIHC.add(n);el.classList.toggle('selected');updIHC()}
 function updIHC(){
@@ -703,12 +719,15 @@ function rmIHC(n){selIHC.delete(n);renderIHC();updIHC()}
 function clearIHC(){selIHC.clear();renderIHC();updIHC()}
 function filterIHC(cat,el){ihcCat=cat;document.querySelectorAll('#ihc-tabs .tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderIHC()}
 
+// ═══════════════════════════════════════════
+//  SPECIAL STAINS RENDER
+// ═══════════════════════════════════════════
 function renderSS(){
-  const g=document.getElementById('ss-grid');g.innerHTML='';
+  const g=document.getElementById('ss-grid'); g.innerHTML='';
   SS.filter(m=>(ssCat==='all'||m.c===ssCat)&&m.n.toLowerCase().includes(ssSearch.toLowerCase()))
     .forEach(m=>{const d=document.createElement('div');
       d.className='marker-chip ss-chip'+(selSS.has(m.n)?' selected':'');
-      d.textContent=m.n;d.onclick=()=>togSS(m.n,d);g.appendChild(d)});
+      d.textContent=m.n; d.onclick=()=>togSS(m.n,d); g.appendChild(d)});
 }
 function togSS(n,el){selSS.has(n)?selSS.delete(n):selSS.add(n);el.classList.toggle('selected');updSS()}
 function updSS(){
@@ -724,11 +743,14 @@ function rmSS(n){selSS.delete(n);renderSS();updSS()}
 function clearSS(){selSS.clear();renderSS();updSS()}
 function filterSS(cat,el){ssCat=cat;document.querySelectorAll('#ss-tabs .tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderSS()}
 
+// ═══════════════════════════════════════════
+//  CASSETTES
+// ═══════════════════════════════════════════
 let casCount=0;
 function addCassette(){
   casCount++;
-  const list=document.getElementById('cassette-list'),id='cas-'+casCount;
-  const div=document.createElement('div');div.className='cassette-item';div.id=id;
+  const list=document.getElementById('cassette-list'), id='cas-'+casCount;
+  const div=document.createElement('div'); div.className='cassette-item'; div.id=id;
   div.innerHTML=`<div><span class="cassette-num">CASSETTE ${casCount}</span>
     <input type="text" placeholder="Block ID e.g. A${casCount}" style="margin-top:6px"></div>
     <input type="text" placeholder="Tissue type / site">
@@ -738,63 +760,56 @@ function addCassette(){
 function getCassettes(){
   return[...document.querySelectorAll('.cassette-item')].map((item,i)=>{
     const ins=item.querySelectorAll('input');
-    const b=ins[0].value.trim()||('C'+(i+1)),t=ins[1].value.trim();
+    const b=ins[0].value.trim()||('C'+(i+1)), t=ins[1].value.trim();
     return t?`${b} (${t})`:b});
 }
 
+// ═══════════════════════════════════════════
+//  STORAGE
+// ═══════════════════════════════════════════
+function loadRequests(){try{return JSON.parse(localStorage.getItem('ihc_requests')||'[]')}catch{return[]}}
+function saveRequests(r){localStorage.setItem('ihc_requests',JSON.stringify(r))}
+
+// ═══════════════════════════════════════════
+//  SUBMIT
+// ═══════════════════════════════════════════
 function pad(n){return String(n).padStart(2,'0')}
 function getDT(){
-  const now=new Date(),days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  return `${days[now.getDay()]} ${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const now=new Date(), days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  return`${days[now.getDay()]} ${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
 }
-
 function validate(){
   let ok=true;
   [['f-doc','doc-name'],['f-pname','patient-name'],['f-caseid','case-id']].forEach(([fid,iid])=>{
-    const f=document.getElementById(fid),v=document.getElementById(iid).value.trim();
+    const f=document.getElementById(fid), v=document.getElementById(iid).value.trim();
     if(!v){f.classList.add('error');ok=false}else f.classList.remove('error')});
   return ok;
 }
-
 function submitRequest(){
   if(!validate()){showToast('Please fill required fields','error');return}
   const casSimple=document.getElementById('cassette-simple').value.trim();
-  const detailedCas=getCassettes();
+  const detCas=getCassettes();
   const req={
-    id: Date.now(),
-    datetime: getDT(),
-    physician: document.getElementById('doc-name').value.trim(),
-    patient: document.getElementById('patient-name').value.trim(),
-    caseId: document.getElementById('case-id').value.trim(),
-    cassettes: detailedCas.length ? detailedCas : (casSimple ? casSimple.split(',').map(s=>s.trim()) : []),
-    ihc: [...selIHC],
-    ss: [...selSS],
-    notes: document.getElementById('clinical-notes').value.trim(),
+    id:Date.now(), datetime:getDT(),
+    physician:document.getElementById('doc-name').value.trim(),
+    patient:document.getElementById('patient-name').value.trim(),
+    caseId:document.getElementById('case-id').value.trim(),
+    cassettes:detCas.length?detCas:(casSimple?casSimple.split(',').map(s=>s.trim()):[]),
+    ihc:[...selIHC], ss:[...selSS],
+    notes:document.getElementById('clinical-notes').value.trim(),
   };
-  // Save
-  const requests=loadRequests();
-  requests.unshift(req);
-  saveRequests(requests);
+  const reqs=loadRequests(); reqs.unshift(req); saveRequests(reqs);
   updateBadge();
-  // Reset form
-  document.getElementById('doc-name').value='';
-  document.getElementById('patient-name').value='';
-  document.getElementById('case-id').value='';
-  document.getElementById('cassette-simple').value='';
-  document.getElementById('clinical-notes').value='';
-  document.getElementById('cassette-list').innerHTML='';
-  casCount=0;
-  clearIHC();clearSS();
-  showToast('✓  Request saved to dashboard!','success');
+  // Reset
+  ['doc-name','patient-name','case-id','cassette-simple','clinical-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('cassette-list').innerHTML=''; casCount=0;
+  clearIHC(); clearSS();
+  showToast('✓ Request saved to dashboard!','success');
 }
 
-// ════════════════════ STORAGE ════════════════════
-function loadRequests(){
-  try{return JSON.parse(localStorage.getItem('ihc_requests')||'[]')}catch{return[]}
-}
-function saveRequests(r){localStorage.setItem('ihc_requests',JSON.stringify(r))}
-
-// ════════════════════ DASHBOARD ════════════════════
+// ═══════════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════════
 function renderDash(){
   const requests=loadRequests();
   const q=(document.getElementById('dash-search').value||'').toLowerCase();
@@ -802,17 +817,18 @@ function renderDash(){
   const today=new Date();
   const todayStr=`${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
 
-  // Stats
   document.getElementById('stat-total').textContent=requests.length;
   document.getElementById('stat-today').textContent=requests.filter(r=>r.datetime.includes(todayStr)).length;
   document.getElementById('stat-ihc').textContent=requests.filter(r=>r.ihc&&r.ihc.length>0).length;
   document.getElementById('stat-ss').textContent=requests.filter(r=>r.ss&&r.ss.length>0).length;
 
-  // Filter
-  let filtered=requests.filter(r=>{
-    const matchQ=!q||(r.patient.toLowerCase().includes(q)||r.caseId.toLowerCase().includes(q)||r.physician.toLowerCase().includes(q));
-    const matchF=filt==='all'||(filt==='ihc'&&r.ihc.length>0&&r.ss.length===0)||(filt==='ss'&&r.ss.length>0&&r.ihc.length===0)||(filt==='both'&&r.ihc.length>0&&r.ss.length>0);
-    return matchQ&&matchF;
+  const filtered=requests.filter(r=>{
+    const mQ=!q||(r.patient.toLowerCase().includes(q)||r.caseId.toLowerCase().includes(q)||r.physician.toLowerCase().includes(q));
+    const mF=filt==='all'
+      ||(filt==='ihc'&&r.ihc.length>0&&r.ss.length===0)
+      ||(filt==='ss'&&r.ss.length>0&&r.ihc.length===0)
+      ||(filt==='both'&&r.ihc.length>0&&r.ss.length>0);
+    return mQ&&mF;
   });
 
   const tbody=document.getElementById('dash-tbody');
@@ -822,23 +838,19 @@ function renderDash(){
   empty.style.display='none';
 
   tbody.innerHTML=filtered.map((r,i)=>{
-    const ihcPills=r.ihc.slice(0,3).map(m=>`<span class="pill">${m}</span>`).join('')+(r.ihc.length>3?`<span class="pill pill-more">+${r.ihc.length-3}</span>`:'');
-    const ssPills=r.ss.slice(0,3).map(m=>`<span class="pill pill-ss">${m}</span>`).join('')+(r.ss.length>3?`<span class="pill pill-more">+${r.ss.length-3}</span>`:'');
-    const expBadge=getExpiryBadge(r.id);
+    const ip=r.ihc.slice(0,3).map(m=>`<span class="pill">${m}</span>`).join('')+(r.ihc.length>3?`<span class="pill pill-more">+${r.ihc.length-3}</span>`:'');
+    const sp=r.ss.slice(0,3).map(m=>`<span class="pill pill-ss">${m}</span>`).join('')+(r.ss.length>3?`<span class="pill pill-more">+${r.ss.length-3}</span>`:'');
     return`<tr>
       <td><span class="td-case">${filtered.length-i}</span></td>
-      <td>
-        <div class="td-main">${r.patient}</div>
-        <div class="td-case" style="margin-top:3px">${r.caseId}</div>
-      </td>
+      <td><div class="td-main">${r.patient}</div><div class="td-case" style="margin-top:3px">${r.caseId}</div></td>
       <td>${r.physician}</td>
-      <td><div class="pills">${ihcPills||'<span style="color:#334155;font-size:11px">—</span>'}</div></td>
-      <td><div class="pills">${ssPills||'<span style="color:#334155;font-size:11px">—</span>'}</div></td>
+      <td><div class="pills">${ip||'<span style="color:#334155;font-size:11px">—</span>'}</div></td>
+      <td><div class="pills">${sp||'<span style="color:#334155;font-size:11px">—</span>'}</div></td>
       <td><span class="td-time">${r.datetime}</span></td>
-      <td>${expBadge}</td>
+      <td>${getExpiryBadge(r.id)}</td>
       <td>
-        <button class="view-btn" onclick="viewRequest(${r.id})">View</button>
-        <button class="del-btn" onclick="deleteRequest(${r.id})">Del</button>
+        <button class="act-btn btn-view" onclick="viewRequest(${r.id})">View</button>
+        <button class="act-btn btn-del"  onclick="deleteRequest(${r.id})">Del</button>
       </td>
     </tr>`;
   }).join('');
@@ -847,459 +859,93 @@ function renderDash(){
 function deleteRequest(id){
   if(!confirm('Delete this request?'))return;
   saveRequests(loadRequests().filter(r=>r.id!==id));
-  updateBadge();renderDash();
+  updateBadge(); renderDash();
 }
-
 function clearAllRequests(){
-  if(!confirm('Delete ALL requests? This cannot be undone.'))return;
-  saveRequests([]);updateBadge();renderDash();
+  if(!confirm('Delete ALL requests? Cannot be undone.'))return;
+  saveRequests([]); updateBadge(); renderDash();
 }
 
 function viewRequest(id){
-  const r=loadRequests().find(r=>r.id===id);if(!r)return;
+  const r=loadRequests().find(r=>r.id===id); if(!r)return;
   document.getElementById('modal-title').textContent=`${r.patient} — ${r.caseId}`;
-  const ihcPills=r.ihc.map(m=>`<span class="pill">${m}</span>`).join(' ')||'<span style="color:#334155">None</span>';
-  const ssPills=r.ss.map(m=>`<span class="pill pill-ss">${m}</span>`).join(' ')||'<span style="color:#334155">None</span>';
-  const cas=r.cassettes.length?r.cassettes.join(', '):'Not specified';
+  const ip=r.ihc.map(m=>`<span class="pill">${m}</span>`).join(' ')||'<span style="color:#334155">None</span>';
+  const sp=r.ss.map(m=>`<span class="pill pill-ss">${m}</span>`).join(' ')||'<span style="color:#334155">None</span>';
   document.getElementById('modal-body').innerHTML=`
     <div class="modal-row"><span class="modal-lbl">Date/Time</span><span class="modal-val">${r.datetime}</span></div>
     <div class="modal-row"><span class="modal-lbl">Physician</span><span class="modal-val">${r.physician}</span></div>
     <div class="modal-row"><span class="modal-lbl">Patient</span><span class="modal-val">${r.patient}</span></div>
     <div class="modal-row"><span class="modal-lbl">Case No.</span><span class="modal-val td-case">${r.caseId}</span></div>
-    <div class="modal-row"><span class="modal-lbl">Cassettes</span><span class="modal-val">${cas}</span></div>
-    <div class="modal-row" style="align-items:flex-start"><span class="modal-lbl">IHC (${r.ihc.length})</span><div class="modal-val pills" style="display:flex;flex-wrap:wrap;gap:5px">${ihcPills}</div></div>
-    <div class="modal-row" style="align-items:flex-start"><span class="modal-lbl">Stains (${r.ss.length})</span><div class="modal-val pills" style="display:flex;flex-wrap:wrap;gap:5px">${ssPills}</div></div>
-    <div class="modal-row" style="align-items:flex-start"><span class="modal-lbl">Notes</span><span class="modal-val" style="color:var(--muted2)">${r.notes||'—'}</span></div>
-  `;
+    <div class="modal-row"><span class="modal-lbl">Cassettes</span><span class="modal-val">${(r.cassettes||[]).join(', ')||'—'}</span></div>
+    <div class="modal-row" style="align-items:flex-start"><span class="modal-lbl">IHC (${r.ihc.length})</span><div class="modal-val" style="display:flex;flex-wrap:wrap;gap:5px">${ip}</div></div>
+    <div class="modal-row" style="align-items:flex-start"><span class="modal-lbl">Stains (${r.ss.length})</span><div class="modal-val" style="display:flex;flex-wrap:wrap;gap:5px">${sp}</div></div>
+    <div class="modal-row" style="align-items:flex-start"><span class="modal-lbl">Notes</span><span class="modal-val" style="color:var(--muted2)">${r.notes||'—'}</span></div>`;
   document.getElementById('modal').classList.add('open');
 }
 function closeModal(){document.getElementById('modal').classList.remove('open')}
 
-function exportCSV(){
-  const requests=loadRequests();
-  if(!requests.length){showToast('No requests to export','error');return}
-  const header='#,DateTime,Physician,Patient,CaseNo,Cassettes,IHC Markers,Special Stains,Notes\n';
-  const rows=requests.map((r,i)=>[
-    i+1,r.datetime,r.physician,r.patient,r.caseId,
-    (r.cassettes||[]).join(' | '),
-    r.ihc.join(' | '),r.ss.join(' | '),
-    (r.notes||'').replace(/,/g,';')
-  ].map(v=>`"${v}"`).join(',')).join('\n');
-  const blob=new Blob([header+rows],{type:'text/csv'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download=`IHC_Requests_${new Date().toISOString().slice(0,10)}.csv`;a.click();
-}
-
-async function exportWord(){
-  const requests=loadRequests();
-  if(!requests.length){showToast('No requests to export','error');return}
-
-  showToast('⏳ Generating Word file...','success');
-
-  // Python script embedded — builds a real .docx via python-docx
-  const pyScript = `
-import sys, json, base64, io
-from docx import Document
-from docx.shared import Pt, RGBColor, Cm
-from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.enum.table import WD_ALIGN_VERTICAL, WD_TABLE_ALIGNMENT
-from docx.oxml.ns import qn
-from docx.oxml import OxmlElement
-from datetime import datetime
-
-def hex_rgb(h):
-    h=h.lstrip('#')
-    return tuple(int(h[i:i+2],16) for i in (0,2,4))
-
-def cell_bg(cell, col):
-    tc=cell._tc; tcPr=tc.get_or_add_tcPr()
-    s=OxmlElement('w:shd')
-    s.set(qn('w:val'),'clear'); s.set(qn('w:color'),'auto'); s.set(qn('w:fill'),col.lstrip('#'))
-    tcPr.append(s)
-
-def cell_borders(cell, col='BFDBFE', sz=4):
-    tc=cell._tc; tcPr=tc.get_or_add_tcPr()
-    tcB=OxmlElement('w:tcBorders')
-    for side in ['top','left','bottom','right']:
-        b=OxmlElement(f'w:{side}')
-        b.set(qn('w:val'),'single'); b.set(qn('w:sz'),str(sz))
-        b.set(qn('w:space'),'0'); b.set(qn('w:color'),col.lstrip('#'))
-        tcB.append(b)
-    tcPr.append(tcB)
-
-def row_ht(row, cm):
-    tr=row._tr; trPr=tr.get_or_add_trPr()
-    h=OxmlElement('w:trHeight')
-    h.set(qn('w:val'),str(int(cm*567))); h.set(qn('w:hRule'),'atLeast')
-    trPr.append(h)
-
-def lv_row(tbl, lbl, val, lbg='EFF6FF', vbg='FFFFFF', lc='1E3A8A', vc='111827', bold=False, sz=12, mono=False):
-    row=tbl.add_row(); row_ht(row, 1.0)
-    lcel=row.cells[0]; cell_bg(lcel,lbg); cell_borders(lcel)
-    lcel.vertical_alignment=WD_ALIGN_VERTICAL.CENTER
-    p=lcel.paragraphs[0]; p.paragraph_format.space_before=Pt(3); p.paragraph_format.space_after=Pt(3)
-    r=p.add_run(lbl); r.font.name='Arial'; r.font.size=Pt(9); r.font.bold=True
-    r.font.color.rgb=RGBColor(*hex_rgb(lc))
-    vcel=row.cells[1]; cell_bg(vcel,vbg); cell_borders(vcel)
-    vcel.vertical_alignment=WD_ALIGN_VERTICAL.CENTER
-    p2=vcel.paragraphs[0]; p2.paragraph_format.space_before=Pt(3); p2.paragraph_format.space_after=Pt(3)
-    r2=p2.add_run(str(val)); r2.font.name='Courier New' if mono else 'Arial'
-    r2.font.size=Pt(sz); r2.font.bold=bold; r2.font.color.rgb=RGBColor(*hex_rgb(vc))
-
-def markers_row(tbl, lbl, items, lbg, lc, bc, vbg):
-    row=tbl.add_row()
-    lcel=row.cells[0]; cell_bg(lcel,lbg); cell_borders(lcel,bc)
-    lcel.vertical_alignment=WD_ALIGN_VERTICAL.TOP
-    p=lcel.paragraphs[0]; p.paragraph_format.space_before=Pt(5); p.paragraph_format.space_after=Pt(3)
-    r=p.add_run(lbl); r.font.name='Arial'; r.font.size=Pt(9); r.font.bold=True; r.font.color.rgb=RGBColor(*hex_rgb(lc))
-    r2=p.add_run(f'\\n({len(items)} selected)'); r2.font.name='Arial'; r2.font.size=Pt(8); r2.font.color.rgb=RGBColor(*hex_rgb('6B7280'))
-    vcel=row.cells[1]; cell_bg(vcel,vbg); cell_borders(vcel,bc)
-    vcel.vertical_alignment=WD_ALIGN_VERTICAL.TOP
-    if not items:
-        p2=vcel.paragraphs[0]; p2.paragraph_format.space_before=Pt(5)
-        r3=p2.add_run('None selected'); r3.font.name='Arial'; r3.font.size=Pt(11)
-        r3.font.italic=True; r3.font.color.rgb=RGBColor(*hex_rgb('9CA3AF'))
-    else:
-        chunks=[items[i:i+5] for i in range(0,len(items),5)]
-        first=True
-        for chunk in chunks:
-            p2=vcel.paragraphs[0] if first else vcel.add_paragraph()
-            first=False
-            p2.paragraph_format.space_before=Pt(4); p2.paragraph_format.space_after=Pt(4)
-            for j,m in enumerate(chunk):
-                if j>0:
-                    sp=p2.add_run('   '); sp.font.size=Pt(11)
-                rm=p2.add_run(f'[ {m} ]')
-                rm.font.name='Courier New'; rm.font.size=Pt(11); rm.font.bold=True
-                rm.font.color.rgb=RGBColor(*hex_rgb(lc))
-
-requests_data = json.loads(sys.argv[1])
-doc=Document()
-sec=doc.sections[0]
-sec.page_width=Cm(21); sec.page_height=Cm(29.7)
-sec.left_margin=Cm(2); sec.right_margin=Cm(2)
-sec.top_margin=Cm(2); sec.bottom_margin=Cm(2)
-doc.styles['Normal'].font.name='Arial'
-doc.styles['Normal'].font.size=Pt(11)
-
-gen_date=datetime.now().strftime('%A, %d %B %Y  %H:%M')
-tp=doc.add_paragraph(); tp.alignment=WD_ALIGN_PARAGRAPH.CENTER
-tr_=tp.add_run('IHC & Special Stains — Requests Report')
-tr_.font.name='Arial'; tr_.font.size=Pt(18); tr_.font.bold=True; tr_.font.color.rgb=RGBColor(*hex_rgb('1E3A8A'))
-sp=doc.add_paragraph(); sp.alignment=WD_ALIGN_PARAGRAPH.CENTER
-sr=sp.add_run(f'Jordan University Hospital  ·  Histopathology Laboratory\\nGenerated: {gen_date}  ·  Total: {len(requests_data)} request(s)')
-sr.font.name='Arial'; sr.font.size=Pt(10); sr.font.color.rgb=RGBColor(*hex_rgb('64748B'))
-doc.add_paragraph()
-
-for idx,r in enumerate(requests_data):
-    if idx>0: doc.add_page_break()
-    hp=doc.add_paragraph()
-    hp.paragraph_format.space_before=Pt(0); hp.paragraph_format.space_after=Pt(6); hp.paragraph_format.keep_with_next=True
-    hr=hp.add_run(f'  REQUEST #{len(requests_data)-idx}  —  {r.get("patient","—")}  /  {r.get("caseId","—")}')
-    hr.font.name='Arial'; hr.font.size=Pt(13); hr.font.bold=True; hr.font.color.rgb=RGBColor(255,255,255)
-    pPr=hp._p.get_or_add_pPr()
-    shd=OxmlElement('w:shd'); shd.set(qn('w:val'),'clear'); shd.set(qn('w:color'),'auto'); shd.set(qn('w:fill'),'1E3A8A')
-    pPr.append(shd)
-    sp2=OxmlElement('w:spacing'); sp2.set(qn('w:before'),'100'); sp2.set(qn('w:after'),'100'); pPr.append(sp2)
-
-    tbl=doc.add_table(rows=0,cols=2); tbl.style='Table Grid'; tbl.alignment=WD_TABLE_ALIGNMENT.CENTER
-    tbl.columns[0].width=Cm(4.2); tbl.columns[1].width=Cm(12.8)
-
-    lv_row(tbl,'DATE & TIME', r.get('datetime','—'), sz=12, lc='1E3A8A', vc='1E3A8A', mono=True)
-    lv_row(tbl,'PHYSICIAN',   r.get('physician','—'), sz=14, bold=True)
-    lv_row(tbl,'PATIENT NAME',r.get('patient','—'),   sz=14, bold=True)
-    lv_row(tbl,'CASE NUMBER', r.get('caseId','—'),    sz=13, bold=True, vc='1E40AF', mono=True)
-    cas=r.get('cassettes',[])
-    lv_row(tbl,'CASSETTE(S)', '  |  '.join(cas) if cas else '—', sz=12, vc='374151')
-    markers_row(tbl,'IHC MARKERS',    r.get('ihc',[]), 'DBEAFE','1E3A8A','93C5FD','F0F7FF')
-    markers_row(tbl,'SPECIAL STAINS', r.get('ss',[]),  'FEF9C3','92400E','FDE68A','FFFEF0')
-    notes=r.get('notes','') or 'No clinical notes provided'
-    lv_row(tbl,'CLINICAL NOTES', notes, vbg='F8FAFC', sz=11, vc='374151')
-
-    fr=tbl.add_row(); row_ht(fr,0.6)
-    fc=fr.cells[0].merge(fr.cells[1]); cell_bg(fc,'F1F5F9'); cell_borders(fc)
-    fp=fc.paragraphs[0]; fp.alignment=WD_ALIGN_PARAGRAPH.RIGHT
-    fp.paragraph_format.space_before=Pt(2); fp.paragraph_format.space_after=Pt(2)
-    frr=fp.add_run('Histopathology Lab System  ·  Jordan University Hospital  ·  CONFIDENTIAL — FOR LAB USE ONLY')
-    frr.font.name='Arial'; frr.font.size=Pt(8); frr.font.color.rgb=RGBColor(*hex_rgb('94A3B8'))
-    doc.add_paragraph()
-
-buf=io.BytesIO(); doc.save(buf); buf.seek(0)
-print(base64.b64encode(buf.read()).decode())
-`;
-
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:4096,
-        messages:[{
-          role:'user',
-          content: `Run this Python script with the argument below. Return ONLY the base64 output, nothing else, no markdown.\n\nScript:\n\`\`\`python\n${pyScript}\n\`\`\`\n\nArgument (sys.argv[1]):\n${JSON.stringify(JSON.stringify(requests))}`
-        }]
-      })
-    });
-
-    const data = await resp.json();
-    const b64 = data.content.map(c=>c.text||'').join('').trim().replace(/```[^\n]*\n?/g,'').trim();
-
-    if(!b64 || b64.length < 100){
-      showToast('Error generating file — try again','error');
-      console.error('API response:', data);
-      return;
-    }
-
-    // Decode base64 → Blob → download
-    const binary = atob(b64);
-    const bytes = new Uint8Array(binary.length);
-    for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
-    const blob = new Blob([bytes],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `IHC_Requests_${new Date().toISOString().slice(0,10)}.docx`;
-    a.click();
-    showToast('✓ Word (.docx) downloaded!','success');
-
-  } catch(e) {
-    showToast('Connection error','error');
-    console.error(e);
-  }
-}
-
-function exportWord_UNUSED(){
-  const requests=loadRequests();
-  if(!requests.length){showToast('No requests to export','error');return}
-  const dateStr=new Date().toLocaleDateString('en-GB',{year:'numeric',month:'long',day:'numeric'});
-
-  // Each request = one full card with a clear layout table
-  const cards=requests.map((r,idx)=>{
-    const cas=(r.cassettes&&r.cassettes.length)?r.cassettes.join(' &nbsp;|&nbsp; '):'—';
-    const ihcItems=r.ihc.length
-      ? r.ihc.map((m,i)=>`<span style="display:inline-block;background:#dbeafe;border:1px solid #93c5fd;
-          border-radius:4px;padding:3px 9px;margin:3px 4px 3px 0;font-size:11pt;
-          color:#1e3a8a;font-family:Arial">${m}</span>`).join('')
-      : '<span style="color:#9ca3af;font-size:11pt">None selected</span>';
-    const ssItems=r.ss.length
-      ? r.ss.map((m,i)=>`<span style="display:inline-block;background:#fef9c3;border:1px solid #fde68a;
-          border-radius:4px;padding:3px 9px;margin:3px 4px 3px 0;font-size:11pt;
-          color:#92400e;font-family:Arial">${m}</span>`).join('')
-      : '<span style="color:#9ca3af;font-size:11pt">None selected</span>';
-
-    const pageBreak = idx>0
-      ? `<br style="mso-special-character:line-break"><![if !supportLineBreakNewLine]><br><![endif]>
-         <p style="page-break-before:always;margin:0">&nbsp;</p>` : '';
-
-    return`${pageBreak}
-<table style="width:100%;border-collapse:collapse;margin-bottom:0">
-  <tr>
-    <td style="background:#1e3a8a;padding:14px 20px;border-radius:0">
-      <span style="font-size:18pt;font-weight:700;color:#ffffff;font-family:Arial">
-        IHC &amp; Special Stains Request
-      </span>
-      &nbsp;&nbsp;
-      <span style="font-size:11pt;color:#93c5fd;font-family:Arial">
-        Jordan University Hospital — Histopathology Lab
-      </span>
-    </td>
-    <td style="background:#1e3a8a;padding:14px 20px;text-align:right;white-space:nowrap">
-      <span style="font-size:10pt;color:#bfdbfe;font-family:Arial;font-weight:700">
-        Request #${requests.length - idx}
-      </span>
-    </td>
-  </tr>
-</table>
-
-<table style="width:100%;border-collapse:collapse;border:2px solid #1e3a8a">
-
-  <tr>
-    <td style="width:22%;background:#eff6ff;padding:12px 16px;border:1px solid #bfdbfe;
-        font-size:10pt;color:#64748b;font-family:Arial;font-weight:700;
-        text-transform:uppercase;letter-spacing:1px;vertical-align:top">
-      Date &amp; Time
-    </td>
-    <td style="padding:12px 16px;border:1px solid #bfdbfe;font-size:13pt;
-        font-family:Arial;font-weight:600;color:#1e3a8a">
-      ${r.datetime}
-    </td>
-  </tr>
-
-  <tr>
-    <td style="background:#eff6ff;padding:12px 16px;border:1px solid #bfdbfe;
-        font-size:10pt;color:#64748b;font-family:Arial;font-weight:700;
-        text-transform:uppercase;letter-spacing:1px;vertical-align:top">
-      Physician
-    </td>
-    <td style="padding:12px 16px;border:1px solid #bfdbfe;font-size:14pt;
-        font-family:Arial;font-weight:700;color:#111827">
-      ${r.physician}
-    </td>
-  </tr>
-
-  <tr>
-    <td style="background:#eff6ff;padding:12px 16px;border:1px solid #bfdbfe;
-        font-size:10pt;color:#64748b;font-family:Arial;font-weight:700;
-        text-transform:uppercase;letter-spacing:1px;vertical-align:top">
-      Patient Name
-    </td>
-    <td style="padding:12px 16px;border:1px solid #bfdbfe;font-size:14pt;
-        font-family:Arial;font-weight:700;color:#111827">
-      ${r.patient}
-    </td>
-  </tr>
-
-  <tr>
-    <td style="background:#eff6ff;padding:12px 16px;border:1px solid #bfdbfe;
-        font-size:10pt;color:#64748b;font-family:Arial;font-weight:700;
-        text-transform:uppercase;letter-spacing:1px;vertical-align:top">
-      Case Number
-    </td>
-    <td style="padding:12px 16px;border:1px solid #bfdbfe;font-size:13pt;
-        font-family:'Courier New',monospace;font-weight:700;color:#1e40af">
-      ${r.caseId}
-    </td>
-  </tr>
-
-  <tr>
-    <td style="background:#eff6ff;padding:12px 16px;border:1px solid #bfdbfe;
-        font-size:10pt;color:#64748b;font-family:Arial;font-weight:700;
-        text-transform:uppercase;letter-spacing:1px;vertical-align:top">
-      Cassette(s)
-    </td>
-    <td style="padding:12px 16px;border:1px solid #bfdbfe;font-size:12pt;
-        font-family:Arial;color:#374151">
-      ${cas}
-    </td>
-  </tr>
-
-  <tr>
-    <td style="background:#dbeafe;padding:14px 16px;border:1px solid #93c5fd;
-        font-size:10pt;color:#1e3a8a;font-family:Arial;font-weight:700;
-        text-transform:uppercase;letter-spacing:1px;vertical-align:top">
-      IHC Markers
-      <br><span style="font-size:9pt;font-weight:400;color:#3b82f6">(${r.ihc.length} selected)</span>
-    </td>
-    <td style="padding:12px 16px;border:1px solid #93c5fd;background:#f0f7ff;
-        line-height:2">
-      ${ihcItems}
-    </td>
-  </tr>
-
-  <tr>
-    <td style="background:#fef9c3;padding:14px 16px;border:1px solid #fde68a;
-        font-size:10pt;color:#92400e;font-family:Arial;font-weight:700;
-        text-transform:uppercase;letter-spacing:1px;vertical-align:top">
-      Special Stains
-      <br><span style="font-size:9pt;font-weight:400;color:#d97706">(${r.ss.length} selected)</span>
-    </td>
-    <td style="padding:12px 16px;border:1px solid #fde68a;background:#fffef0;
-        line-height:2">
-      ${ssItems}
-    </td>
-  </tr>
-
-  <tr>
-    <td style="background:#eff6ff;padding:12px 16px;border:1px solid #bfdbfe;
-        font-size:10pt;color:#64748b;font-family:Arial;font-weight:700;
-        text-transform:uppercase;letter-spacing:1px;vertical-align:top">
-      Clinical Notes
-    </td>
-    <td style="padding:12px 16px;border:1px solid #bfdbfe;font-size:12pt;
-        font-family:Arial;color:#374151;font-style:${r.notes?'normal':'italic'}">
-      ${r.notes||'No clinical notes provided'}
-    </td>
-  </tr>
-
-  <tr>
-    <td colspan="2" style="background:#f8fafc;padding:10px 16px;border:1px solid #bfdbfe;
-        font-size:9pt;color:#94a3b8;font-family:Arial;text-align:right">
-      Histopathology Lab System &nbsp;&bull;&nbsp; Jordan University Hospital &nbsp;&bull;&nbsp;
-      <b>CONFIDENTIAL — For Lab Use Only</b>
-    </td>
-  </tr>
-
-</table>`;
-  }).join('\n\n');
-
-  const html=`<html xmlns:o="urn:schemas-microsoft-com:office:office"
-  xmlns:w="urn:schemas-microsoft-com:office:word"
-  xmlns="http://www.w3.org/TR/REC-html40">
-<head>
-<meta charset="UTF-8">
-<!--[if gte mso 9]><xml>
-<w:WordDocument>
-  <w:View>Print</w:View>
-  <w:Zoom>100</w:Zoom>
-  <w:DoNotOptimizeForBrowser/>
-</w:WordDocument>
-</xml><![endif]-->
-<style>
-  @page Section1 {
-    size:21cm 29.7cm; /* A4 portrait */
-    margin:2cm 2cm 2cm 2cm;
-    mso-header-margin:1cm;
-    mso-footer-margin:1cm;
-    mso-paper-source:0;
-  }
-  div.Section1 { page:Section1; }
-  body {
-    font-family:Arial,sans-serif;
-    font-size:12pt;
-    color:#111827;
-    margin:0;
-    padding:0;
-  }
-  table { border-collapse:collapse; width:100%; margin-bottom:0; }
-  p { margin:0; padding:0; }
-</style>
-</head>
-<body>
-<div class="Section1">
-
-<p style="text-align:center;font-size:11pt;color:#64748b;font-family:Arial;margin-bottom:30px">
-  <b>Histopathology Laboratory — Jordan University Hospital</b><br>
-  IHC &amp; Special Stains Requests &nbsp;&bull;&nbsp; Generated: ${dateStr} &nbsp;&bull;&nbsp; Total: ${requests.length} request(s)
-</p>
-
-${cards}
-
-</div>
-</body>
-</html>`;
-
-  const blob2=new Blob(['\ufeff'+html],{type:'application/msword'});
-  const a2=document.createElement('a');
-  a2.href=URL.createObjectURL(blob2);
-  a2.download=`IHC_Requests_${new Date().toISOString().slice(0,10)}.doc`;
-  a2.click();
-}
-
-// ════════════════════ EXPIRY (90 days) ════════════════════
+// ═══════════════════════════════════════════
+//  EXPIRY (90 days)
+// ═══════════════════════════════════════════
 const EXPIRY_DAYS=90;
 function getExpiryBadge(id){
-  const created=id; // id = Date.now() at creation
-  const now=Date.now();
-  const diffDays=Math.floor((now-created)/(1000*60*60*24));
-  const left=EXPIRY_DAYS-diffDays;
+  const left=EXPIRY_DAYS-Math.floor((Date.now()-id)/(864e5));
   if(left<=0) return`<span class="exp-badge exp-dead">⚠ Expired</span>`;
-  if(left<=14) return`<span class="exp-badge exp-warn">⏳ ${left}d left</span>`;
+  if(left<=14)return`<span class="exp-badge exp-warn">⏳ ${left}d</span>`;
   return`<span class="exp-badge exp-ok">✓ ${left}d</span>`;
 }
 function purgeExpired(){
-  const now=Date.now();
   const before=loadRequests();
-  const after=before.filter(r=>(now-r.id)<EXPIRY_DAYS*24*60*60*1000);
-  if(after.length<before.length){
-    saveRequests(after);
-    showToast(`${before.length-after.length} expired request(s) auto-removed`,'success');
-  }
+  const after=before.filter(r=>(Date.now()-r.id)<EXPIRY_DAYS*864e5);
+  if(after.length<before.length){saveRequests(after);showToast(`${before.length-after.length} expired request(s) removed`,'success')}
 }
 
-// ════════════════════ LOCK / PIN ════════════════════
-const DASH_PIN_KEY='ihc_dash_pin';
-const SESSION_KEY='ihc_unlocked';
-function getPin(){return localStorage.getItem(DASH_PIN_KEY)||'1234'}
+// ═══════════════════════════════════════════
+//  EXPORTS
+// ═══════════════════════════════════════════
+function exportCSV(){
+  const reqs=loadRequests();
+  if(!reqs.length){showToast('No requests to export','error');return}
+  const hdr='#,DateTime,Physician,Patient,CaseNo,Cassettes,IHC Markers,Special Stains,Notes\n';
+  const rows=reqs.map((r,i)=>[
+    i+1,r.datetime,r.physician,r.patient,r.caseId,
+    (r.cassettes||[]).join(' | '),r.ihc.join(' | '),r.ss.join(' | '),
+    (r.notes||'').replace(/,/g,';')
+  ].map(v=>`"${v}"`).join(',')).join('\n');
+  const blob=new Blob(['\ufeff'+hdr+rows],{type:'text/csv'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=`IHC_Requests_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+  showToast('CSV downloaded','success');
+}
+
+function backupJSON(){
+  const reqs=loadRequests();
+  if(!reqs.length){showToast('No requests to backup','error');return}
+  const blob=new Blob([JSON.stringify(reqs,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=`IHC_Backup_${new Date().toISOString().slice(0,10)}.json`; a.click();
+  showToast('Backup downloaded','success');
+}
+
+function exportWord(){
+  document.getElementById('word-modal').classList.add('open');
+}
+function exportWordBackupAndShow(){
+  backupJSON();
+  showToast('JSON downloaded — now run the Python script','success');
+  document.getElementById('word-modal').classList.remove('open');
+}
+
+function printDash(){
+  document.getElementById('print-date').textContent=new Date().toLocaleString();
+  window.print();
+}
+
+// ═══════════════════════════════════════════
+//  LOCK / PIN
+// ═══════════════════════════════════════════
+const PIN_KEY='ihc_dash_pin', SESSION_KEY='ihc_unlocked';
+function getPin(){return localStorage.getItem(PIN_KEY)||'1234'}
 function unlockDash(){
   const val=document.getElementById('lock-pin').value;
   const err=document.getElementById('lock-err');
@@ -1314,7 +960,6 @@ function unlockDash(){
   }
 }
 function checkLock(){
-  // Only lock dashboard tab, not the form
   if(!sessionStorage.getItem(SESSION_KEY)){
     document.getElementById('lock-overlay').style.display='flex';
     setTimeout(()=>document.getElementById('lock-pin').focus(),200);
@@ -1324,32 +969,18 @@ function checkLock(){
 }
 function changePIN(){
   const cur=prompt('Enter current PIN:');
-  if(cur!==getPin()){alert('Wrong PIN');return}
-  const n1=prompt('Enter new PIN (4-6 digits):');
-  if(!n1||n1.length<4){alert('PIN must be at least 4 digits');return}
+  if(cur!==getPin()){showToast('Wrong PIN','error');return}
+  const n1=prompt('New PIN (4-6 digits):');
+  if(!n1||n1.length<4){showToast('PIN must be at least 4 digits','error');return}
   const n2=prompt('Confirm new PIN:');
-  if(n1!==n2){alert('PINs do not match');return}
-  localStorage.setItem(DASH_PIN_KEY,n1);
+  if(n1!==n2){showToast('PINs do not match','error');return}
+  localStorage.setItem(PIN_KEY,n1);
   showToast('PIN changed successfully','success');
 }
 
-// ════════════════════ PRINT ════════════════════
-function printDash(){
-  document.getElementById('print-date').textContent=new Date().toLocaleString();
-  window.print();
-}
-
-// ════════════════════ BACKUP (JSON download) ════════════════════
-function backupJSON(){
-  const requests=loadRequests();
-  if(!requests.length){showToast('No requests to backup','error');return}
-  const blob=new Blob([JSON.stringify(requests,null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download=`IHC_Backup_${new Date().toISOString().slice(0,10)}.json`;a.click();
-  showToast('Backup downloaded','success');
-}
-
-// ════════════════════ NAV ════════════════════
+// ═══════════════════════════════════════════
+//  NAV
+// ═══════════════════════════════════════════
 function showPage(name,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
@@ -1358,11 +989,12 @@ function showPage(name,el){
   if(name==='dash'){checkLock();renderDash();}
 }
 function updateBadge(){
-  const n=loadRequests().length;
-  document.getElementById('nav-badge').textContent=n;
+  document.getElementById('nav-badge').textContent=loadRequests().length;
 }
 
-// ════════════════════ TOAST ════════════════════
+// ═══════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════
 let toastTimer;
 function showToast(msg,type='success'){
   clearTimeout(toastTimer);
@@ -1375,13 +1007,12 @@ function showToast(msg,type='success'){
   toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
 }
 
-// ════════════════════ INIT ════════════════════
-renderIHC();renderSS();updateBadge();purgeExpired();
-// Add Change PIN button to nav dynamically
-document.querySelector('.nav-tabs').insertAdjacentHTML('beforeend',
-  `<button class="nav-tab" onclick="changePIN()" style="font-size:12px">🔑 PIN</button>`
-);
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+renderIHC(); renderSS(); updateBadge(); purgeExpired();
+document.getElementById('nav-tabs').insertAdjacentHTML('beforeend',
+  `<button class="nav-tab" onclick="changePIN()" style="font-size:12px;padding:7px 12px">🔑 PIN</button>`);
 </script>
 </body>
 </html>
-

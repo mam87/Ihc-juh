@@ -890,7 +890,185 @@ function exportCSV(){
   a.download=`IHC_Requests_${new Date().toISOString().slice(0,10)}.csv`;a.click();
 }
 
-function exportWord(){
+async function exportWord(){
+  const requests=loadRequests();
+  if(!requests.length){showToast('No requests to export','error');return}
+
+  showToast('⏳ Generating Word file...','success');
+
+  // Python script embedded — builds a real .docx via python-docx
+  const pyScript = `
+import sys, json, base64, io
+from docx import Document
+from docx.shared import Pt, RGBColor, Cm
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.table import WD_ALIGN_VERTICAL, WD_TABLE_ALIGNMENT
+from docx.oxml.ns import qn
+from docx.oxml import OxmlElement
+from datetime import datetime
+
+def hex_rgb(h):
+    h=h.lstrip('#')
+    return tuple(int(h[i:i+2],16) for i in (0,2,4))
+
+def cell_bg(cell, col):
+    tc=cell._tc; tcPr=tc.get_or_add_tcPr()
+    s=OxmlElement('w:shd')
+    s.set(qn('w:val'),'clear'); s.set(qn('w:color'),'auto'); s.set(qn('w:fill'),col.lstrip('#'))
+    tcPr.append(s)
+
+def cell_borders(cell, col='BFDBFE', sz=4):
+    tc=cell._tc; tcPr=tc.get_or_add_tcPr()
+    tcB=OxmlElement('w:tcBorders')
+    for side in ['top','left','bottom','right']:
+        b=OxmlElement(f'w:{side}')
+        b.set(qn('w:val'),'single'); b.set(qn('w:sz'),str(sz))
+        b.set(qn('w:space'),'0'); b.set(qn('w:color'),col.lstrip('#'))
+        tcB.append(b)
+    tcPr.append(tcB)
+
+def row_ht(row, cm):
+    tr=row._tr; trPr=tr.get_or_add_trPr()
+    h=OxmlElement('w:trHeight')
+    h.set(qn('w:val'),str(int(cm*567))); h.set(qn('w:hRule'),'atLeast')
+    trPr.append(h)
+
+def lv_row(tbl, lbl, val, lbg='EFF6FF', vbg='FFFFFF', lc='1E3A8A', vc='111827', bold=False, sz=12, mono=False):
+    row=tbl.add_row(); row_ht(row, 1.0)
+    lcel=row.cells[0]; cell_bg(lcel,lbg); cell_borders(lcel)
+    lcel.vertical_alignment=WD_ALIGN_VERTICAL.CENTER
+    p=lcel.paragraphs[0]; p.paragraph_format.space_before=Pt(3); p.paragraph_format.space_after=Pt(3)
+    r=p.add_run(lbl); r.font.name='Arial'; r.font.size=Pt(9); r.font.bold=True
+    r.font.color.rgb=RGBColor(*hex_rgb(lc))
+    vcel=row.cells[1]; cell_bg(vcel,vbg); cell_borders(vcel)
+    vcel.vertical_alignment=WD_ALIGN_VERTICAL.CENTER
+    p2=vcel.paragraphs[0]; p2.paragraph_format.space_before=Pt(3); p2.paragraph_format.space_after=Pt(3)
+    r2=p2.add_run(str(val)); r2.font.name='Courier New' if mono else 'Arial'
+    r2.font.size=Pt(sz); r2.font.bold=bold; r2.font.color.rgb=RGBColor(*hex_rgb(vc))
+
+def markers_row(tbl, lbl, items, lbg, lc, bc, vbg):
+    row=tbl.add_row()
+    lcel=row.cells[0]; cell_bg(lcel,lbg); cell_borders(lcel,bc)
+    lcel.vertical_alignment=WD_ALIGN_VERTICAL.TOP
+    p=lcel.paragraphs[0]; p.paragraph_format.space_before=Pt(5); p.paragraph_format.space_after=Pt(3)
+    r=p.add_run(lbl); r.font.name='Arial'; r.font.size=Pt(9); r.font.bold=True; r.font.color.rgb=RGBColor(*hex_rgb(lc))
+    r2=p.add_run(f'\\n({len(items)} selected)'); r2.font.name='Arial'; r2.font.size=Pt(8); r2.font.color.rgb=RGBColor(*hex_rgb('6B7280'))
+    vcel=row.cells[1]; cell_bg(vcel,vbg); cell_borders(vcel,bc)
+    vcel.vertical_alignment=WD_ALIGN_VERTICAL.TOP
+    if not items:
+        p2=vcel.paragraphs[0]; p2.paragraph_format.space_before=Pt(5)
+        r3=p2.add_run('None selected'); r3.font.name='Arial'; r3.font.size=Pt(11)
+        r3.font.italic=True; r3.font.color.rgb=RGBColor(*hex_rgb('9CA3AF'))
+    else:
+        chunks=[items[i:i+5] for i in range(0,len(items),5)]
+        first=True
+        for chunk in chunks:
+            p2=vcel.paragraphs[0] if first else vcel.add_paragraph()
+            first=False
+            p2.paragraph_format.space_before=Pt(4); p2.paragraph_format.space_after=Pt(4)
+            for j,m in enumerate(chunk):
+                if j>0:
+                    sp=p2.add_run('   '); sp.font.size=Pt(11)
+                rm=p2.add_run(f'[ {m} ]')
+                rm.font.name='Courier New'; rm.font.size=Pt(11); rm.font.bold=True
+                rm.font.color.rgb=RGBColor(*hex_rgb(lc))
+
+requests_data = json.loads(sys.argv[1])
+doc=Document()
+sec=doc.sections[0]
+sec.page_width=Cm(21); sec.page_height=Cm(29.7)
+sec.left_margin=Cm(2); sec.right_margin=Cm(2)
+sec.top_margin=Cm(2); sec.bottom_margin=Cm(2)
+doc.styles['Normal'].font.name='Arial'
+doc.styles['Normal'].font.size=Pt(11)
+
+gen_date=datetime.now().strftime('%A, %d %B %Y  %H:%M')
+tp=doc.add_paragraph(); tp.alignment=WD_ALIGN_PARAGRAPH.CENTER
+tr_=tp.add_run('IHC & Special Stains — Requests Report')
+tr_.font.name='Arial'; tr_.font.size=Pt(18); tr_.font.bold=True; tr_.font.color.rgb=RGBColor(*hex_rgb('1E3A8A'))
+sp=doc.add_paragraph(); sp.alignment=WD_ALIGN_PARAGRAPH.CENTER
+sr=sp.add_run(f'Jordan University Hospital  ·  Histopathology Laboratory\\nGenerated: {gen_date}  ·  Total: {len(requests_data)} request(s)')
+sr.font.name='Arial'; sr.font.size=Pt(10); sr.font.color.rgb=RGBColor(*hex_rgb('64748B'))
+doc.add_paragraph()
+
+for idx,r in enumerate(requests_data):
+    if idx>0: doc.add_page_break()
+    hp=doc.add_paragraph()
+    hp.paragraph_format.space_before=Pt(0); hp.paragraph_format.space_after=Pt(6); hp.paragraph_format.keep_with_next=True
+    hr=hp.add_run(f'  REQUEST #{len(requests_data)-idx}  —  {r.get("patient","—")}  /  {r.get("caseId","—")}')
+    hr.font.name='Arial'; hr.font.size=Pt(13); hr.font.bold=True; hr.font.color.rgb=RGBColor(255,255,255)
+    pPr=hp._p.get_or_add_pPr()
+    shd=OxmlElement('w:shd'); shd.set(qn('w:val'),'clear'); shd.set(qn('w:color'),'auto'); shd.set(qn('w:fill'),'1E3A8A')
+    pPr.append(shd)
+    sp2=OxmlElement('w:spacing'); sp2.set(qn('w:before'),'100'); sp2.set(qn('w:after'),'100'); pPr.append(sp2)
+
+    tbl=doc.add_table(rows=0,cols=2); tbl.style='Table Grid'; tbl.alignment=WD_TABLE_ALIGNMENT.CENTER
+    tbl.columns[0].width=Cm(4.2); tbl.columns[1].width=Cm(12.8)
+
+    lv_row(tbl,'DATE & TIME', r.get('datetime','—'), sz=12, lc='1E3A8A', vc='1E3A8A', mono=True)
+    lv_row(tbl,'PHYSICIAN',   r.get('physician','—'), sz=14, bold=True)
+    lv_row(tbl,'PATIENT NAME',r.get('patient','—'),   sz=14, bold=True)
+    lv_row(tbl,'CASE NUMBER', r.get('caseId','—'),    sz=13, bold=True, vc='1E40AF', mono=True)
+    cas=r.get('cassettes',[])
+    lv_row(tbl,'CASSETTE(S)', '  |  '.join(cas) if cas else '—', sz=12, vc='374151')
+    markers_row(tbl,'IHC MARKERS',    r.get('ihc',[]), 'DBEAFE','1E3A8A','93C5FD','F0F7FF')
+    markers_row(tbl,'SPECIAL STAINS', r.get('ss',[]),  'FEF9C3','92400E','FDE68A','FFFEF0')
+    notes=r.get('notes','') or 'No clinical notes provided'
+    lv_row(tbl,'CLINICAL NOTES', notes, vbg='F8FAFC', sz=11, vc='374151')
+
+    fr=tbl.add_row(); row_ht(fr,0.6)
+    fc=fr.cells[0].merge(fr.cells[1]); cell_bg(fc,'F1F5F9'); cell_borders(fc)
+    fp=fc.paragraphs[0]; fp.alignment=WD_ALIGN_PARAGRAPH.RIGHT
+    fp.paragraph_format.space_before=Pt(2); fp.paragraph_format.space_after=Pt(2)
+    frr=fp.add_run('Histopathology Lab System  ·  Jordan University Hospital  ·  CONFIDENTIAL — FOR LAB USE ONLY')
+    frr.font.name='Arial'; frr.font.size=Pt(8); frr.font.color.rgb=RGBColor(*hex_rgb('94A3B8'))
+    doc.add_paragraph()
+
+buf=io.BytesIO(); doc.save(buf); buf.seek(0)
+print(base64.b64encode(buf.read()).decode())
+`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:4096,
+        messages:[{
+          role:'user',
+          content: `Run this Python script with the argument below. Return ONLY the base64 output, nothing else, no markdown.\n\nScript:\n\`\`\`python\n${pyScript}\n\`\`\`\n\nArgument (sys.argv[1]):\n${JSON.stringify(JSON.stringify(requests))}`
+        }]
+      })
+    });
+
+    const data = await resp.json();
+    const b64 = data.content.map(c=>c.text||'').join('').trim().replace(/```[^\n]*\n?/g,'').trim();
+
+    if(!b64 || b64.length < 100){
+      showToast('Error generating file — try again','error');
+      console.error('API response:', data);
+      return;
+    }
+
+    // Decode base64 → Blob → download
+    const binary = atob(b64);
+    const bytes = new Uint8Array(binary.length);
+    for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
+    const blob = new Blob([bytes],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `IHC_Requests_${new Date().toISOString().slice(0,10)}.docx`;
+    a.click();
+    showToast('✓ Word (.docx) downloaded!','success');
+
+  } catch(e) {
+    showToast('Connection error','error');
+    console.error(e);
+  }
+}
+
+function exportWord_UNUSED(){
   const requests=loadRequests();
   if(!requests.length){showToast('No requests to export','error');return}
   const dateStr=new Date().toLocaleDateString('en-GB',{year:'numeric',month:'long',day:'numeric'});
@@ -1090,12 +1268,11 @@ ${cards}
 </body>
 </html>`;
 
-  const blob=new Blob(['\ufeff'+html],{type:'application/msword'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download=`IHC_Requests_${new Date().toISOString().slice(0,10)}.doc`;
-  a.click();
-  showToast('Word report downloaded!','success');
+  const blob2=new Blob(['\ufeff'+html],{type:'application/msword'});
+  const a2=document.createElement('a');
+  a2.href=URL.createObjectURL(blob2);
+  a2.download=`IHC_Requests_${new Date().toISOString().slice(0,10)}.doc`;
+  a2.click();
 }
 
 // ════════════════════ EXPIRY (90 days) ════════════════════

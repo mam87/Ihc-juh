@@ -895,70 +895,205 @@ function exportWord(){
   if(!requests.length){showToast('No requests to export','error');return}
   const dateStr=new Date().toLocaleDateString('en-GB',{year:'numeric',month:'long',day:'numeric'});
 
-  const tableRows=requests.map((r,i)=>{
-    const cas=(r.cassettes&&r.cassettes.length)?r.cassettes.join(', '):'—';
-    const ihcList=r.ihc.length?r.ihc.join(', '):'—';
-    const ssList=r.ss.length?r.ss.join(', '):'—';
-    const bg=i%2===0?'#f0f4ff':'#ffffff';
-    return`<tr style="background:${bg}">
-      <td style="padding:7px 10px;border:1px solid #c7d2fe;font-weight:700;color:#1e3a8a;text-align:center">${i+1}</td>
-      <td style="padding:7px 10px;border:1px solid #c7d2fe;font-family:monospace;font-size:10pt;color:#1e40af">${r.datetime}</td>
-      <td style="padding:7px 10px;border:1px solid #c7d2fe;font-weight:600">${r.physician}</td>
-      <td style="padding:7px 10px;border:1px solid #c7d2fe">
-        <b>${r.patient}</b><br><span style="color:#1e40af;font-family:monospace;font-size:9pt">${r.caseId}</span>
-      </td>
-      <td style="padding:7px 10px;border:1px solid #c7d2fe;font-size:9pt;color:#374151">${cas}</td>
-      <td style="padding:7px 10px;border:1px solid #c7d2fe;font-size:9pt;color:#1e3a8a">${ihcList}</td>
-      <td style="padding:7px 10px;border:1px solid #c7d2fe;font-size:9pt;color:#92400e">${ssList}</td>
-      <td style="padding:7px 10px;border:1px solid #c7d2fe;font-size:9pt;color:#6b7280">${r.notes||'—'}</td>
-    </tr>`;
-  }).join('');
+  // Each request = one full card with a clear layout table
+  const cards=requests.map((r,idx)=>{
+    const cas=(r.cassettes&&r.cassettes.length)?r.cassettes.join(' &nbsp;|&nbsp; '):'—';
+    const ihcItems=r.ihc.length
+      ? r.ihc.map((m,i)=>`<span style="display:inline-block;background:#dbeafe;border:1px solid #93c5fd;
+          border-radius:4px;padding:3px 9px;margin:3px 4px 3px 0;font-size:11pt;
+          color:#1e3a8a;font-family:Arial">${m}</span>`).join('')
+      : '<span style="color:#9ca3af;font-size:11pt">None selected</span>';
+    const ssItems=r.ss.length
+      ? r.ss.map((m,i)=>`<span style="display:inline-block;background:#fef9c3;border:1px solid #fde68a;
+          border-radius:4px;padding:3px 9px;margin:3px 4px 3px 0;font-size:11pt;
+          color:#92400e;font-family:Arial">${m}</span>`).join('')
+      : '<span style="color:#9ca3af;font-size:11pt">None selected</span>';
 
-  const html=`
-<html xmlns:o="urn:schemas-microsoft-com:office:office"
-      xmlns:w="urn:schemas-microsoft-com:office:word"
-      xmlns="http://www.w3.org/TR/REC-html40">
+    const pageBreak = idx>0
+      ? `<br style="mso-special-character:line-break"><![if !supportLineBreakNewLine]><br><![endif]>
+         <p style="page-break-before:always;margin:0">&nbsp;</p>` : '';
+
+    return`${pageBreak}
+<table style="width:100%;border-collapse:collapse;margin-bottom:0">
+  <tr>
+    <td style="background:#1e3a8a;padding:14px 20px;border-radius:0">
+      <span style="font-size:18pt;font-weight:700;color:#ffffff;font-family:Arial">
+        IHC &amp; Special Stains Request
+      </span>
+      &nbsp;&nbsp;
+      <span style="font-size:11pt;color:#93c5fd;font-family:Arial">
+        Jordan University Hospital — Histopathology Lab
+      </span>
+    </td>
+    <td style="background:#1e3a8a;padding:14px 20px;text-align:right;white-space:nowrap">
+      <span style="font-size:10pt;color:#bfdbfe;font-family:Arial;font-weight:700">
+        Request #${requests.length - idx}
+      </span>
+    </td>
+  </tr>
+</table>
+
+<table style="width:100%;border-collapse:collapse;border:2px solid #1e3a8a">
+
+  <tr>
+    <td style="width:22%;background:#eff6ff;padding:12px 16px;border:1px solid #bfdbfe;
+        font-size:10pt;color:#64748b;font-family:Arial;font-weight:700;
+        text-transform:uppercase;letter-spacing:1px;vertical-align:top">
+      Date &amp; Time
+    </td>
+    <td style="padding:12px 16px;border:1px solid #bfdbfe;font-size:13pt;
+        font-family:Arial;font-weight:600;color:#1e3a8a">
+      ${r.datetime}
+    </td>
+  </tr>
+
+  <tr>
+    <td style="background:#eff6ff;padding:12px 16px;border:1px solid #bfdbfe;
+        font-size:10pt;color:#64748b;font-family:Arial;font-weight:700;
+        text-transform:uppercase;letter-spacing:1px;vertical-align:top">
+      Physician
+    </td>
+    <td style="padding:12px 16px;border:1px solid #bfdbfe;font-size:14pt;
+        font-family:Arial;font-weight:700;color:#111827">
+      ${r.physician}
+    </td>
+  </tr>
+
+  <tr>
+    <td style="background:#eff6ff;padding:12px 16px;border:1px solid #bfdbfe;
+        font-size:10pt;color:#64748b;font-family:Arial;font-weight:700;
+        text-transform:uppercase;letter-spacing:1px;vertical-align:top">
+      Patient Name
+    </td>
+    <td style="padding:12px 16px;border:1px solid #bfdbfe;font-size:14pt;
+        font-family:Arial;font-weight:700;color:#111827">
+      ${r.patient}
+    </td>
+  </tr>
+
+  <tr>
+    <td style="background:#eff6ff;padding:12px 16px;border:1px solid #bfdbfe;
+        font-size:10pt;color:#64748b;font-family:Arial;font-weight:700;
+        text-transform:uppercase;letter-spacing:1px;vertical-align:top">
+      Case Number
+    </td>
+    <td style="padding:12px 16px;border:1px solid #bfdbfe;font-size:13pt;
+        font-family:'Courier New',monospace;font-weight:700;color:#1e40af">
+      ${r.caseId}
+    </td>
+  </tr>
+
+  <tr>
+    <td style="background:#eff6ff;padding:12px 16px;border:1px solid #bfdbfe;
+        font-size:10pt;color:#64748b;font-family:Arial;font-weight:700;
+        text-transform:uppercase;letter-spacing:1px;vertical-align:top">
+      Cassette(s)
+    </td>
+    <td style="padding:12px 16px;border:1px solid #bfdbfe;font-size:12pt;
+        font-family:Arial;color:#374151">
+      ${cas}
+    </td>
+  </tr>
+
+  <tr>
+    <td style="background:#dbeafe;padding:14px 16px;border:1px solid #93c5fd;
+        font-size:10pt;color:#1e3a8a;font-family:Arial;font-weight:700;
+        text-transform:uppercase;letter-spacing:1px;vertical-align:top">
+      IHC Markers
+      <br><span style="font-size:9pt;font-weight:400;color:#3b82f6">(${r.ihc.length} selected)</span>
+    </td>
+    <td style="padding:12px 16px;border:1px solid #93c5fd;background:#f0f7ff;
+        line-height:2">
+      ${ihcItems}
+    </td>
+  </tr>
+
+  <tr>
+    <td style="background:#fef9c3;padding:14px 16px;border:1px solid #fde68a;
+        font-size:10pt;color:#92400e;font-family:Arial;font-weight:700;
+        text-transform:uppercase;letter-spacing:1px;vertical-align:top">
+      Special Stains
+      <br><span style="font-size:9pt;font-weight:400;color:#d97706">(${r.ss.length} selected)</span>
+    </td>
+    <td style="padding:12px 16px;border:1px solid #fde68a;background:#fffef0;
+        line-height:2">
+      ${ssItems}
+    </td>
+  </tr>
+
+  <tr>
+    <td style="background:#eff6ff;padding:12px 16px;border:1px solid #bfdbfe;
+        font-size:10pt;color:#64748b;font-family:Arial;font-weight:700;
+        text-transform:uppercase;letter-spacing:1px;vertical-align:top">
+      Clinical Notes
+    </td>
+    <td style="padding:12px 16px;border:1px solid #bfdbfe;font-size:12pt;
+        font-family:Arial;color:#374151;font-style:${r.notes?'normal':'italic'}">
+      ${r.notes||'No clinical notes provided'}
+    </td>
+  </tr>
+
+  <tr>
+    <td colspan="2" style="background:#f8fafc;padding:10px 16px;border:1px solid #bfdbfe;
+        font-size:9pt;color:#94a3b8;font-family:Arial;text-align:right">
+      Histopathology Lab System &nbsp;&bull;&nbsp; Jordan University Hospital &nbsp;&bull;&nbsp;
+      <b>CONFIDENTIAL — For Lab Use Only</b>
+    </td>
+  </tr>
+
+</table>`;
+  }).join('\n\n');
+
+  const html=`<html xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:w="urn:schemas-microsoft-com:office:word"
+  xmlns="http://www.w3.org/TR/REC-html40">
 <head>
 <meta charset="UTF-8">
-<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View>
-<w:Zoom>90</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->
+<!--[if gte mso 9]><xml>
+<w:WordDocument>
+  <w:View>Print</w:View>
+  <w:Zoom>100</w:Zoom>
+  <w:DoNotOptimizeForBrowser/>
+</w:WordDocument>
+</xml><![endif]-->
 <style>
-  @page { size:A4 landscape; margin:1.5cm 1.5cm 1.5cm 1.5cm; }
-  body { font-family:Arial,sans-serif; font-size:10pt; color:#111827; }
-  h1   { font-size:16pt; color:#1e3a8a; margin-bottom:4px; }
-  .sub { font-size:10pt; color:#64748b; margin-bottom:18px; }
-  table{ border-collapse:collapse; width:100%; }
-  th   { background:#1e3a8a; color:#fff; padding:9px 10px; font-size:9pt;
-         text-align:left; border:1px solid #1e3a8a; }
-  td   { font-size:9.5pt; vertical-align:top; }
-  .footer{ margin-top:14px; font-size:8pt; color:#9ca3af; text-align:right; }
+  @page Section1 {
+    size:21cm 29.7cm; /* A4 portrait */
+    margin:2cm 2cm 2cm 2cm;
+    mso-header-margin:1cm;
+    mso-footer-margin:1cm;
+    mso-paper-source:0;
+  }
+  div.Section1 { page:Section1; }
+  body {
+    font-family:Arial,sans-serif;
+    font-size:12pt;
+    color:#111827;
+    margin:0;
+    padding:0;
+  }
+  table { border-collapse:collapse; width:100%; margin-bottom:0; }
+  p { margin:0; padding:0; }
 </style>
 </head>
 <body>
-<h1>&#x1F52C; IHC &amp; Special Stains — Requests Report</h1>
-<div class="sub">Jordan University Hospital &nbsp;&bull;&nbsp; Histopathology Laboratory &nbsp;&bull;&nbsp; Generated: ${dateStr} &nbsp;&bull;&nbsp; Total: ${requests.length} request(s)</div>
-<table>
-  <thead>
-    <tr>
-      <th style="width:3%">#</th>
-      <th style="width:11%">Date &amp; Time</th>
-      <th style="width:12%">Physician</th>
-      <th style="width:13%">Patient / Case</th>
-      <th style="width:8%">Cassettes</th>
-      <th style="width:22%">IHC Markers</th>
-      <th style="width:18%">Special Stains</th>
-      <th style="width:13%">Notes</th>
-    </tr>
-  </thead>
-  <tbody>${tableRows}</tbody>
-</table>
-<div class="footer">Histopathology Lab System &nbsp;&bull;&nbsp; Jordan University Hospital &nbsp;&bull;&nbsp; Confidential — For Lab Use Only</div>
-</body></html>`;
+<div class="Section1">
+
+<p style="text-align:center;font-size:11pt;color:#64748b;font-family:Arial;margin-bottom:30px">
+  <b>Histopathology Laboratory — Jordan University Hospital</b><br>
+  IHC &amp; Special Stains Requests &nbsp;&bull;&nbsp; Generated: ${dateStr} &nbsp;&bull;&nbsp; Total: ${requests.length} request(s)
+</p>
+
+${cards}
+
+</div>
+</body>
+</html>`;
 
   const blob=new Blob(['\ufeff'+html],{type:'application/msword'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download=`IHC_Report_${new Date().toISOString().slice(0,10)}.doc`;
+  a.download=`IHC_Requests_${new Date().toISOString().slice(0,10)}.doc`;
   a.click();
   showToast('Word report downloaded!','success');
 }

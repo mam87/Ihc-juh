@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مختبر الأنسجة والخلايا</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#07101f;--mid:#0e1e38;--light:#142848;
+  --teal:#00c2d4;--teal2:#0096b7;--tg:rgba(0,194,212,0.12);
+  --gold:#f0d060;--gold2:#c8a030;
+  --w:#eef2f7;--dim:rgba(238,242,247,0.55);
+  --red:#e05c5c;--green:#3ecf7a;--purple:#a87fe8;--orange:#f0a040;
+  --border:rgba(0,194,212,0.16);
+  --card:rgba(14,30,56,0.97);
+  --g:rgba(255,255,255,0.025);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Cairo',sans-serif;background:var(--navy);color:var(--w);min-height:100vh;
+  background-image:
+    radial-gradient(ellipse 60% 40% at 0% 0%,rgba(0,194,212,0.06),transparent),
+    radial-gradient(ellipse 50% 50% at 100% 100%,rgba(168,127,232,0.05),transparent);}
+
+/* HEADER */
+.hdr{background:linear-gradient(180deg,var(--mid),rgba(14,30,56,0.98));border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;backdrop-filter:blur(12px);}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;padding:10px 32px;max-width:1400px;margin:0 auto;}
+.logo{display:flex;align-items:center;gap:12px;}
+.lic{width:38px;height:38px;background:linear-gradient(135deg,var(--teal),#005f80);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 16px rgba(0,194,212,0.3);flex-shrink:0;}
+.logo h1{font-size:15px;font-weight:900;color:var(--w);line-height:1.25;}
+.logo small{font-size:9.5px;color:var(--teal);font-family:'IBM Plex Mono',monospace;letter-spacing:0.5px;display:block;}
+.clk{font-family:'IBM Plex Mono',monospace;text-align:left;}
+.clk .ct{font-size:18px;font-weight:700;color:var(--teal);direction:ltr;line-height:1.2;}
+.clk .cd{font-size:9px;color:var(--dim);}
+.tabs{display:flex;padding:0 32px;gap:0;background:rgba(7,16,31,0.5);border-bottom:1px solid var(--border);max-width:100%;}
+.tab{padding:9px 20px;background:none;border:none;border-bottom:2px solid transparent;color:var(--dim);font-family:'Cairo',sans-serif;font-size:12.5px;font-weight:700;cursor:pointer;transition:all 0.17s;position:relative;top:1px;display:flex;align-items:center;gap:6px;}
+.tab.on{color:var(--teal);border-bottom-color:var(--teal);background:var(--tg);}
+.tab:hover:not(.on){color:var(--w);}
+.nbg{background:var(--teal);color:var(--navy);border-radius:8px;padding:1px 6px;font-size:9.5px;font-weight:900;font-family:'IBM Plex Mono',monospace;}
+
+/* MAIN */
+.main{max-width:1400px;margin:0 auto;padding:20px 32px;}
+.tp{display:none;}
+.tp.on{display:block;animation:fade .2s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+/* FORM HEADER BAR */
+.fbar{display:grid;grid-template-columns:2fr 1.4fr 1fr;gap:12px;margin-bottom:14px;}
+.fc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;}
+.fc-title{font-size:9.5px;font-weight:800;color:var(--teal);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:5px;}
+.fc-title::before{content:'';width:3px;height:10px;background:var(--teal);border-radius:2px;flex-shrink:0;}
+.fi{display:flex;flex-direction:column;gap:3px;margin-bottom:8px;}
+.fi:last-child{margin-bottom:0;}
+.fi label{font-size:10.5px;font-weight:700;color:var(--dim);}
+.fi input,.fi textarea{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--w);font-family:'Cairo',sans-serif;font-size:13px;outline:none;direction:rtl;transition:border-color .14s,background .14s;}
+.fi input:focus,.fi textarea:focus{border-color:var(--teal);background:rgba(0,194,212,0.07);box-shadow:0 0 0 2px rgba(0,194,212,0.1);}
+.fi textarea{resize:none;height:58px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+
+/* STAIN CARD */
+.scard{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px;}
+.stabs{display:flex;background:rgba(0,0,0,0.25);border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.stab{padding:9px 18px;background:none;border:none;border-bottom:2px solid transparent;color:var(--dim);font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .14s;display:flex;align-items:center;gap:7px;white-space:nowrap;}
+.stab.on{color:var(--w);border-bottom-color:var(--teal);background:rgba(0,194,212,0.08);}
+.stab:hover:not(.on){color:var(--w);}
+.sbdg{padding:2px 8px;border-radius:9px;font-size:10px;font-weight:800;}
+.stab.on .sbdg.ihc{background:rgba(0,194,212,0.22);color:var(--teal);}
+.stab.on .sbdg.ss{background:rgba(240,208,96,0.22);color:var(--gold);}
+.stab:not(.on) .sbdg{background:rgba(255,255,255,0.06);color:var(--dim);}
+.spanel{display:none;padding:15px 16px;}
+.spanel.on{display:block;animation:fade .17s ease;}
+.mgrp{margin-bottom:14px;}
+.mgrp:last-child{margin-bottom:0;}
+.mgrp-lbl{font-size:9.5px;font-weight:800;letter-spacing:1.3px;margin-bottom:8px;display:flex;align-items:center;gap:7px;color:var(--dim);}
+.mgrp-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:5px;}
+.mi{background:var(--g);border:1px solid var(--border);border-radius:7px;padding:6px 9px;cursor:pointer;transition:all .12s;display:flex;align-items:center;gap:7px;user-select:none;}
+.mi:hover{border-color:var(--teal);background:rgba(0,194,212,0.08);}
+.mi.si{background:rgba(0,194,212,0.11);border-color:var(--teal);box-shadow:0 0 8px rgba(0,194,212,0.12);}
+.mi.ss2{background:rgba(240,208,96,0.09);border-color:var(--gold);box-shadow:0 0 8px rgba(240,208,96,0.09);}
+.mck{width:13px;height:13px;border-radius:3px;border:2px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:8px;flex-shrink:0;transition:all .12s;}
+.si .mck{background:var(--teal);border-color:var(--teal);color:var(--navy);}
+.ss2 .mck{background:var(--gold);border-color:var(--gold);color:var(--navy);}
+.mn{font-size:11.5px;font-weight:700;font-family:'IBM Plex Mono',monospace;direction:ltr;line-height:1.2;}
+.md{font-size:8.5px;color:var(--dim);margin-top:1px;line-height:1.2;}
+.cbox{background:rgba(0,194,212,0.04);border:1px dashed rgba(0,194,212,0.25);border-radius:8px;padding:10px 12px;margin-top:11px;}
+.cbox-lbl{font-size:10px;color:var(--teal);font-weight:700;margin-bottom:6px;}
+.crow{display:flex;gap:7px;}
+.crow input{flex:1;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--w);font-family:'IBM Plex Mono',monospace;font-size:12px;outline:none;direction:ltr;}
+.crow input:focus{border-color:var(--teal);}
+.crow button{padding:6px 13px;background:rgba(0,194,212,0.14);border:1px solid rgba(0,194,212,0.28);border-radius:6px;color:var(--teal);font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .12s;white-space:nowrap;}
+.crow button:hover{background:rgba(0,194,212,0.27);}
+
+/* CHIPS BAR */
+.chips-bar{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 14px;margin-bottom:12px;display:flex;align-items:flex-start;gap:9px;}
+.chips-lbl{font-size:10.5px;font-weight:800;color:var(--teal);white-space:nowrap;padding-top:3px;flex-shrink:0;}
+.chips-wrap{display:flex;flex-wrap:wrap;gap:5px;flex:1;min-height:24px;}
+.chip{padding:3px 8px;border-radius:10px;font-size:10.5px;font-weight:700;font-family:'IBM Plex Mono',monospace;display:flex;align-items:center;gap:4px;}
+.ci{background:rgba(0,194,212,0.16);color:var(--teal);border:1px solid rgba(0,194,212,0.3);}
+.cs{background:rgba(240,208,96,0.13);color:var(--gold);border:1px solid rgba(240,208,96,0.26);}
+.cc{background:rgba(168,127,232,0.14);color:var(--purple);border:1px solid rgba(168,127,232,0.26);}
+.cr{cursor:pointer;opacity:0.5;font-size:12px;line-height:1;}
+.cr:hover{opacity:1;}
+.echip{color:var(--dim);font-size:11.5px;padding:2px 0;}
+.clr-btn{padding:3px 10px;border-radius:6px;font-size:10.5px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:none;color:var(--dim);font-family:'Cairo',sans-serif;flex-shrink:0;transition:all .12s;}
+.clr-btn:hover{border-color:var(--red);color:var(--red);}
+
+/* ACTION BAR */
+.abar{display:flex;gap:9px;padding:4px 0 16px;flex-wrap:wrap;}
+.btn{padding:9px 20px;border-radius:8px;font-family:'Cairo',sans-serif;font-size:12.5px;font-weight:700;cursor:pointer;border:none;display:flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap;}
+.bprim{background:linear-gradient(135deg,var(--teal),var(--teal2));color:var(--navy);box-shadow:0 3px 12px rgba(0,194,212,0.25);}
+.bprim:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(0,194,212,0.35);}
+.bgold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);}
+.bgold:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(240,208,96,0.28);}
+.bword{background:rgba(0,100,220,0.18);color:#70a8ff;border:1px solid rgba(0,100,220,0.28);}
+.bword:hover{background:rgba(0,100,220,0.3);}
+.boutline{background:none;color:var(--dim);border:1px solid var(--border);}
+.boutline:hover{border-color:var(--teal);color:var(--teal);}
+
+/* ORDERS TABLE */
+.otoolbar{display:flex;gap:10px;margin-bottom:12px;align-items:center;}
+.sf{flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 14px;color:var(--w);font-family:'Cairo',sans-serif;font-size:13px;outline:none;direction:rtl;}
+.sf:focus{border-color:var(--teal);}
+.sf::placeholder{color:rgba(238,242,247,0.2);}
+.twrap{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:rgba(0,194,212,0.07);border-bottom:2px solid var(--border);}
+th{padding:10px 13px;font-size:10.5px;font-weight:800;color:var(--teal);letter-spacing:0.5px;text-align:right;white-space:nowrap;}
+tbody tr{border-bottom:1px solid rgba(255,255,255,0.035);transition:background .1s;}
+tbody tr:hover{background:rgba(0,194,212,0.035);}
+td{padding:9px 13px;font-size:12.5px;vertical-align:middle;}
+.tmono{font-family:'IBM Plex Mono',monospace;font-size:11px;direction:ltr;text-align:left;}
+.tact{display:flex;gap:4px;justify-content:flex-end;flex-wrap:nowrap;}
+.ab{padding:4px 9px;border-radius:5px;font-size:10.5px;font-weight:700;cursor:pointer;border:none;font-family:'Cairo',sans-serif;white-space:nowrap;transition:all .1s;}
+.av{background:rgba(0,194,212,0.13);color:var(--teal);}
+.av:hover{background:rgba(0,194,212,0.25);}
+.ap{background:rgba(240,208,96,0.13);color:var(--gold);}
+.ap:hover{background:rgba(240,208,96,0.25);}
+.aw{background:rgba(0,100,220,0.12);color:#70a8ff;}
+.aw:hover{background:rgba(0,100,220,0.24);}
+.adl{background:rgba(224,92,92,0.1);color:var(--red);}
+.adl:hover{background:rgba(224,92,92,0.22);}
+
+/* MODAL */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,0.76);backdrop-filter:blur(8px);z-index:999;display:none;align-items:center;justify-content:center;padding:16px;}
+.modal-ov.on{display:flex;animation:fade .18s ease;}
+.modal-box{background:var(--mid);border:1px solid var(--border);border-radius:16px;width:100%;max-width:800px;max-height:93vh;overflow-y:auto;box-shadow:0 24px 70px rgba(0,0,0,0.6);}
+.mhdr{display:flex;align-items:center;justify-content:space-between;padding:15px 22px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--mid);z-index:1;}
+.mhdr h2{font-size:14px;font-weight:900;}
+.mcls{width:28px;height:28px;border-radius:6px;background:rgba(255,255,255,0.06);border:none;color:var(--w);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;}
+.mcls:hover{background:rgba(224,92,92,0.22);color:var(--red);}
+.mbody{padding:18px 22px;}
+.mactions{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap;}
+
+/* PRINT REPORT */
+.rp{background:white;color:#15202e;border-radius:8px;padding:22px;font-family:'Cairo',sans-serif;direction:rtl;font-size:12pt;}
+.rp-top{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:12px;margin-bottom:14px;border-bottom:3px solid #07101f;}
+.rp-brand h2{font-size:16px;font-weight:900;color:#07101f;}
+.rp-brand p{font-size:9px;color:#888;margin-top:1px;}
+.rp-badge{background:#0096b7;color:white;padding:4px 12px;border-radius:5px;font-size:12px;font-weight:900;margin-top:4px;display:inline-block;}
+.rp-info{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px 14px;background:#f4f8fb;border:1px solid #dde8f0;border-radius:7px;padding:12px;margin-bottom:14px;}
+.rp-row{display:flex;flex-direction:column;gap:1px;}
+.rp-lbl{font-size:8.5px;color:#999;font-weight:800;letter-spacing:0.3px;}
+.rp-val{font-size:12.5px;font-weight:800;color:#15202e;}
+.rp-sec{margin-bottom:13px;}
+.rp-sec-title{font-size:11px;font-weight:900;border-right:4px solid #0096b7;padding-right:8px;margin-bottom:9px;color:#0096b7;}
+.rp-sec-title.ss{color:#b8870a;border-right-color:#b8870a;}
+.rp-sec-title.cu{color:#6a3ecf;border-right-color:#6a3ecf;}
+.rp-markers{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:5px;}
+.rp-m{padding:4px 8px;border-radius:4px;font-size:10.5px;font-weight:800;text-align:center;font-family:'IBM Plex Mono',monospace;direction:ltr;}
+.rp-m.i{background:rgba(0,150,183,0.09);color:#005f80;border:1px solid rgba(0,150,183,0.2);}
+.rp-m.s{background:rgba(184,135,10,0.09);color:#7a5800;border:1px solid rgba(184,135,10,0.2);}
+.rp-m.c{background:rgba(106,62,207,0.09);color:#4a2aa0;border:1px solid rgba(106,62,207,0.2);}
+.rp-notes{padding:8px 10px;background:#fffbee;border:1px solid #f0dfa0;border-radius:6px;font-size:11.5px;color:#555;margin-top:10px;}
+.rp-notes b{color:#7a5800;}
+.rp-footer{margin-top:16px;padding-top:10px;border-top:1px solid #e0e8f0;display:flex;justify-content:space-between;align-items:flex-end;}
+.rp-sig{text-align:center;}
+.rp-sig .line{width:120px;border-top:2px solid #15202e;margin:18px auto 4px;}
+.rp-sig p{font-size:10px;font-weight:800;color:#15202e;}
+.rp-sig small{font-size:8.5px;color:#999;}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--mid);border:1px solid var(--teal);border-radius:8px;padding:10px 18px;font-size:12.5px;font-weight:700;color:var(--w);z-index:9999;transition:transform .24s ease;box-shadow:0 6px 20px rgba(0,0,0,0.4);display:flex;align-items:center;gap:7px;pointer-events:none;}
+.toast.on{transform:translateX(-50%) translateY(0);}
+.toast.ok{border-color:var(--green);}
+.toast.er{border-color:var(--red);}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(0,194,212,0.2);border-radius:3px;}
+.empty-st{text-align:center;padding:48px 20px;color:var(--dim);}
+.empty-st .ei{font-size:40px;margin-bottom:10px;}
+.empty-st p{font-size:14px;}
+.divider{height:1px;background:var(--border);margin:14px 0;}
+/* ── ORDER CARDS ── */
+.ocard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px 16px;margin-bottom:10px;transition:border-color .15s;}
+.ocard:hover{border-color:rgba(0,194,212,0.35);}
+.ocard-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:11px;gap:10px;}
+.ocard-patient{flex:1;}
+.ocard-patient .name{font-size:15px;font-weight:900;color:var(--w);line-height:1.2;}
+.ocard-patient .dt{font-size:10px;color:var(--dim);margin-top:3px;}
+.ocard-num{font-size:10px;color:var(--dim);text-align:left;line-height:1.7;font-family:'IBM Plex Mono',monospace;}
+.ocard-num b{color:var(--w);}
+.ocard-meta{display:flex;align-items:center;gap:8px;margin-bottom:11px;flex-wrap:wrap;}
+.ocard-dr{font-size:12px;font-weight:700;color:var(--w);background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;padding:3px 10px;}
+.ocard-badge{padding:3px 9px;border-radius:8px;font-size:10.5px;font-weight:800;}
+.ocard-ihc{background:rgba(0,194,212,0.14);color:var(--teal);border:1px solid rgba(0,194,212,0.28);}
+.ocard-ss{background:rgba(240,208,96,0.13);color:var(--gold);border:1px solid rgba(240,208,96,0.26);}
+.ocard-actions{display:flex;gap:7px;flex-wrap:wrap;}
+.ocard-actions .ab{padding:7px 14px;font-size:12px;border-radius:7px;}
+.ap{background:rgba(240,208,96,0.14);color:var(--gold);}
+.ap:hover{background:rgba(240,208,96,0.28);}
+.aw{background:rgba(0,100,220,0.14);color:#70a8ff;}
+.aw:hover{background:rgba(0,100,220,0.28);}
+.av{background:rgba(0,194,212,0.13);color:var(--teal);}
+.av:hover{background:rgba(0,194,212,0.26);}
+.adl{background:rgba(224,92,92,0.1);color:var(--red);}
+.adl:hover{background:rgba(224,92,92,0.22);}
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="logo">
+      <div class="lic">🔬</div>
+      <div>
+        <h1>مختبر الأنسجة والخلايا</h1>
+        <small>HISTOPATHOLOGY &amp; CYTOLOGY LABORATORY</small>
+      </div>
+    </div>
+    <div class="clk">
+      <div class="ct" id="clk">--:--:--</div>
+      <div class="cd" id="clkd">---</div>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab on" onclick="switchTab('order',this)">📋 طلب جديد</button>
+    <button class="tab" onclick="switchTab('list',this)">📂 الطلبات <span class="nbg" id="nc">0</span></button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ═══════════ NEW ORDER ═══════════ -->
+  <div class="tp on" id="tp-order">
+
+    <!-- INFO ROW -->
+    <div class="fbar">
+      <div class="fc">
+        <div class="fc-title">معلومات المريض</div>
+        <div class="fi"><label>اسم المريض الكامل</label><input type="text" id="pName" placeholder="الاسم الكامل للمريض"></div>
+        <div class="g2">
+          <div class="fi"><label>رقم الحالة (Case No.)</label><input type="text" id="cNo" placeholder="H-2025-0001"></div>
+          <div class="fi"><label>رقم الملف الطبي (MR)</label><input type="text" id="mrNo" placeholder="MR-123456"></div>
+        </div>
+      </div>
+      <div class="fc">
+        <div class="fc-title">الطبيب الطالب</div>
+        <div class="fi"><label>اسم الطبيب</label><input type="text" id="drName" placeholder="د. اسم الطبيب"></div>
+      </div>
+      <div class="fc">
+        <div class="fc-title">ملاحظات سريرية</div>
+        <div class="fi"><label>ملاحظات</label><textarea id="notes" placeholder="أي ملاحظات أو معلومات إضافية..."></textarea></div>
+      </div>
+    </div>
+
+    <!-- STAINS CARD -->
+    <div class="scard">
+      <div class="stabs">
+        <button class="stab on" onclick="stainTab('ihc',this)"><span class="sbdg ihc">IHC</span> التلوين المناعي الكيميائي</button>
+        <button class="stab" onclick="stainTab('ss',this)"><span class="sbdg ss">Special Stain</span> الصبغات الخاصة</button>
+      </div>
+
+      <!-- IHC PANEL -->
+      <div class="spanel on" id="sp-ihc">
+        <div class="mgrp"><div class="mgrp-lbl">🎀 BREAST &amp; GYNECOLOGICAL</div><div class="mgrid" id="g-breast"></div></div>
+        <div class="mgrp"><div class="mgrp-lbl">🔵 LYMPHOMA &amp; HEMATOLOGY</div><div class="mgrid" id="g-lymphoma"></div></div>
+        <div class="mgrp"><div class="mgrp-lbl">🟠 GASTROINTESTINAL &amp; HEPATIC</div><div class="mgrid" id="g-gi"></div></div>
+        <div class="mgrp"><div class="mgrp-lbl">🫁 LUNG &amp; THORACIC</div><div class="mgrid" id="g-lung"></div></div>
+        <div class="mgrp"><div class="mgrp-lbl">🧬 GENERAL EPITHELIAL</div><div class="mgrid" id="g-epi"></div></div>
+        <div class="mgrp"><div class="mgrp-lbl">🧠 NEUROENDOCRINE &amp; CNS</div><div class="mgrid" id="g-neuro"></div></div>
+        <div class="mgrp"><div class="mgrp-lbl">🔶 PROSTATE &amp; UROLOGICAL</div><div class="mgrid" id="g-uro"></div></div>
+        <div class="mgrp"><div class="mgrp-lbl">🧫 SOFT TISSUE &amp; SARCOMA</div><div class="mgrid" id="g-soft"></div></div>
+        <div class="mgrp"><div class="mgrp-lbl">🔬 MELANOMA &amp; SKIN</div><div class="mgrid" id="g-skin"></div></div>
+        <div class="mgrp"><div class="mgrp-lbl">⚙️ PROLIFERATION &amp; PROGNOSIS</div><div class="mgrid" id="g-prog"></div></div>
+        <div class="cbox">
+          <div class="cbox-lbl">➕ أضف IHC غير موجود بالقائمة</div>
+          <div class="crow"><input type="text" id="cihc" placeholder="اكتب اسم الماركر..."><button onclick="addCustom('ihc')">إضافة</button></div>
+        </div>
+      </div>
+
+      <!-- SS PANEL -->
+      <div class="spanel" id="sp-ss">
+        <div class="mgrp"><div class="mgrp-lbl">🟡 ROUTINE &amp; CONNECTIVE TISSUE</div><div class="mgrid" id="g-ct"></div></div>
+        <div class="mgrp"><div class="mgrp-lbl">🦠 MICROORGANISMS &amp; INFECTIOUS</div><div class="mgrid" id="g-micro"></div></div>
+        <div class="mgrp"><div class="mgrp-lbl">⚗️ DEPOSITS &amp; MINERALS</div><div class="mgrid" id="g-dep"></div></div>
+        <div class="mgrp"><div class="mgrp-lbl">🩸 HEMATOLOGY (BONE MARROW)</div><div class="mgrid" id="g-bm"></div></div>
+        <div class="mgrp"><div class="mgrp-lbl">🧪 GLYCOGEN &amp; MUCINS</div><div class="mgrid" id="g-gly"></div></div>
+        <div class="cbox">
+          <div class="cbox-lbl">➕ أضف صبغة غير موجودة بالقائمة</div>
+          <div class="crow"><input type="text" id="css2" placeholder="اكتب اسم الصبغة..."><button onclick="addCustom('ss')">إضافة</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHIPS -->
+    <div class="chips-bar">
+      <span class="chips-lbl">المختار:</span>
+      <div class="chips-wrap" id="chips"><span class="echip">لم يتم الاختيار بعد...</span></div>
+      <button class="clr-btn" onclick="clearAll()">مسح الكل</button>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="abar">
+      <button class="btn bprim" onclick="submitOrder()">✅ إرسال الطلب</button>
+      <button class="btn bgold" onclick="previewOrder()">👁️ معاينة وطباعة PDF</button>
+      <button class="btn bword" onclick="downloadWord()">📄 تحميل Word</button>
+      <button class="btn boutline" onclick="resetForm()">🔄 إعادة تعيين</button>
+    </div>
+  </div>
+
+  <!-- ═══════════ ORDERS LIST ═══════════ -->
+  <div class="tp" id="tp-list">
+    <div class="otoolbar">
+      <input class="sf" type="text" placeholder="🔍 بحث باسم المريض أو رقم الحالة أو الطبيب..." oninput="renderOrders(this.value)">
+      <button class="btn boutline" onclick="renderOrders()" style="padding:9px 14px;font-size:12px;">🔄 تحديث</button>
+    </div>
+    <div id="cards-wrap"></div>
+  </div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-ov" id="modal">
+  <div class="modal-box">
+    <div class="mhdr">
+      <h2>📄 طلب الفحص — Lab Order</h2>
+      <button class="mcls" onclick="closeModal()">✕</button>
+    </div>
+    <div class="mbody">
+      <div id="rarea"></div>
+      <div class="mactions">
+        <button class="btn bgold" onclick="printRep()">🖨️ طباعة / PDF</button>
+        <button class="btn bword" onclick="wordFromModal()">📄 تحميل Word</button>
+        <button class="btn boutline" onclick="closeModal()">إغلاق</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════
+const D = {
+  breast:[
+    {n:"ER",d:"Estrogen Receptor"},{n:"PR",d:"Progesterone Receptor"},
+    {n:"HER2",d:"HER2/neu (c-erbB-2)"},{n:"Ki-67",d:"Proliferation Index"},
+    {n:"E-Cadherin",d:"Lobular vs Ductal"},{n:"p53",d:"Tumor Suppressor"},
+    {n:"AR",d:"Androgen Receptor"},{n:"BRCA1",d:"BRCA1 Protein"},
+    {n:"GCDFP-15",d:"Gross Cystic Disease"},{n:"Mammaglobin",d:"Breast Origin"},
+    {n:"GATA3",d:"Breast / Urothelial"},{n:"NY-BR-1",d:"Breast Specific"},
+    {n:"WT1",d:"Ovarian / Mesothelioma"},{n:"CA125",d:"Ovarian"},
+    {n:"PAX8",d:"Renal / Thyroid / Gyn"},{n:"Estrogen R-beta",d:"ER-beta"},
+  ],
+  lymphoma:[
+    {n:"CD2",d:"T-Cell"},{n:"CD3",d:"T-Cell Marker"},
+    {n:"CD4",d:"T-Helper"},{n:"CD5",d:"T/B-Cell"},
+    {n:"CD7",d:"T-Cell"},{n:"CD8",d:"Cytotoxic T"},
+    {n:"CD10",d:"Follicular / Pre-B"},{n:"CD15",d:"Hodgkin / RS"},
+    {n:"CD19",d:"B-Cell"},{n:"CD20",d:"B-Cell Marker"},
+    {n:"CD21",d:"FDC / Mantle"},{n:"CD23",d:"CLL / FDC"},
+    {n:"CD25",d:"ATLL / HCL"},{n:"CD30",d:"Reed-Sternberg / ALCL"},
+    {n:"CD34",d:"Precursor / Stem"},{n:"CD38",d:"Plasma / Myeloma"},
+    {n:"CD43",d:"T-Cell / Myeloid"},{n:"CD45",d:"LCA"},
+    {n:"CD56",d:"NK-Cell"},{n:"CD57",d:"NK / T-Cell"},
+    {n:"CD68",d:"Histiocyte / Myeloid"},{n:"CD79a",d:"B-Cell"},
+    {n:"CD99",d:"Ewing / Lymphoblastic"},{n:"CD117",d:"Mast Cell / AML"},
+    {n:"CD123",d:"BPDCN / HCL"},{n:"CD138",d:"Plasma / Myeloma"},
+    {n:"BCL2",d:"Anti-apoptotic"},{n:"BCL6",d:"Germinal Center"},
+    {n:"MUM1",d:"Plasma Cell / ABC"},{n:"MYC",d:"Burkitt / DLBCL"},
+    {n:"Cyclin D1",d:"MCL / Myeloma"},{n:"TdT",d:"Lymphoblastic"},
+    {n:"Kappa",d:"Light Chain"},{n:"Lambda",d:"Light Chain"},
+    {n:"ALK1",d:"ALCL"},{n:"EBV (LMP1)",d:"EBV-driven lymphoma"},
+    {n:"SOX11",d:"Mantle Cell"},{n:"LEF1",d:"CLL"},
+  ],
+  gi:[
+    {n:"CDX2",d:"GI / Colorectal"},{n:"CK20",d:"Colorectal / Urothelial"},
+    {n:"CEA",d:"Carcinoembryonic Ag"},{n:"Villin",d:"Intestinal"},
+    {n:"MUC2",d:"Intestinal Mucin"},{n:"MUC5AC",d:"Gastric Mucin"},
+    {n:"HepPar1",d:"Hepatocellular"},{n:"Arginase-1",d:"Hepatocellular"},
+    {n:"GPC3",d:"HCC / Yolk Sac"},{n:"AFP",d:"HCC / Germ Cell"},
+    {n:"pCEA (canalicular)",d:"HCC canalicular"},{n:"CD10 (canalicular)",d:"HCC"},
+    {n:"SMAD4",d:"Pancreatic Ca"},{n:"CA19-9",d:"Pancreatic / Biliary"},
+    {n:"CK7",d:"Biliary / Pancreatic"},
+  ],
+  lung:[
+    {n:"TTF1",d:"Lung Adeno / Thyroid"},{n:"Napsin A",d:"Lung Adenocarcinoma"},
+    {n:"p40",d:"Squamous Cell"},{n:"p63",d:"Squamous"},
+    {n:"CK5/6",d:"Squamous / Mesothelioma"},{n:"EGFR",d:"Lung Adeno"},
+    {n:"ALK",d:"ALK-rearranged NSCLC"},{n:"ROS1",d:"ROS1-fusion NSCLC"},
+    {n:"PD-L1",d:"Immunotherapy marker"},{n:"Calretinin",d:"Mesothelioma"},
+    {n:"Mesothelin",d:"Mesothelioma"},{n:"WT1",d:"Mesothelioma / Ovarian"},
+    {n:"D2-40",d:"Lymphatic / Mesothelioma"},
+  ],
+  epi:[
+    {n:"AE1/AE3",d:"Pan-Cytokeratin"},{n:"MNF116",d:"Pan-Cytokeratin"},
+    {n:"CK8/18",d:"Simple Epithelium"},{n:"CK19",d:"Ductal / Biliary"},
+    {n:"EMA",d:"Epithelial Membrane Ag"},{n:"BerEP4",d:"Adenocarcinoma"},
+    {n:"Vimentin",d:"Mesenchymal"},{n:"SMA",d:"Smooth Muscle / Myoepithelial"},
+    {n:"Calponin",d:"Myoepithelial"},{n:"p14ARF",d:"Tumor Suppressor"},
+    {n:"SMARCB1/INI1",d:"Rhabdoid / Epithelioid"},{n:"NUT",d:"NUT Carcinoma"},
+  ],
+  neuro:[
+    {n:"Synaptophysin",d:"Neuroendocrine"},{n:"Chromogranin A",d:"Neuroendocrine"},
+    {n:"NSE",d:"Neural / NE"},{n:"GFAP",d:"Astrocytic Tumors"},
+    {n:"NeuN",d:"Neuronal"},{n:"Olig2",d:"Oligodendroglioma"},
+    {n:"IDH1",d:"Glioma R132H"},{n:"ATRX",d:"Glioma"},
+    {n:"H3K27M",d:"Diffuse Midline Glioma"},{n:"EGFR Amp",d:"GBM"},
+    {n:"SSTR2a",d:"Somatostatin Receptor"},{n:"CD56 (NCAM)",d:"NE / NK"},
+    {n:"PGP9.5",d:"Neural"},{n:"S100",d:"Neural / Sustentacular"},
+    {n:"Thyroglobulin",d:"Thyroid"},{n:"Calcitonin",d:"Medullary Thyroid"},
+    {n:"PAX8 (thyroid)",d:"Thyroid / PTC"},{n:"BRAF V600E",d:"PTC / Melanoma"},
+  ],
+  uro:[
+    {n:"PSA",d:"Prostate Specific Ag"},{n:"PSAP",d:"Prostate Acid Phos."},
+    {n:"P504S/AMACR",d:"Prostate Carcinoma"},{n:"34BE12",d:"Basal Cell (Prostate)"},
+    {n:"NKX3.1",d:"Prostate Specific"},{n:"GATA3",d:"Urothelial / Breast"},
+    {n:"Uroplakin II",d:"Urothelial"},{n:"Uroplakin III",d:"Urothelial"},
+    {n:"HMWCK",d:"Urothelial Basal"},{n:"RCC (CD10)",d:"Renal Cell Ca"},
+    {n:"PAX2",d:"Renal / Mullerian"},{n:"Carbonic Anh IX",d:"Clear Cell RCC"},
+    {n:"TFE3",d:"Xp11 Translocation RCC"},
+  ],
+  soft:[
+    {n:"Desmin",d:"Muscle / Rhabdomyo"},{n:"MyoD1",d:"Rhabdomyosarcoma"},
+    {n:"Myogenin",d:"Rhabdomyosarcoma"},{n:"CD34",d:"DFSP / SFT / Gastrointestinal"},
+    {n:"DOG1",d:"GIST"},{n:"CD117/c-Kit",d:"GIST / Mast Cell"},
+    {n:"STAT6",d:"Solitary Fibrous Tumor"},{n:"MDM2",d:"WD Liposarcoma"},
+    {n:"CDK4",d:"WD Liposarcoma"},{n:"TLE1",d:"Synovial Sarcoma"},
+    {n:"SS18-SSX",d:"Synovial Sarcoma"},{n:"FLI1",d:"Ewing / Vascular"},
+    {n:"ERG",d:"Vascular / Prostate"},{n:"CD31",d:"Vascular"},
+    {n:"CD99",d:"Ewing / Lymphoblastic"},{n:"INI1/SMARCB1",d:"Epithelioid / Rhabdoid"},
+  ],
+  skin:[
+    {n:"S100",d:"Melanoma / Neural"},{n:"HMB-45",d:"Melanoma"},
+    {n:"Melan-A",d:"Melanocytic"},{n:"SOX10",d:"Melanoma / Schwannian"},
+    {n:"MART1",d:"Melanoma"},{n:"MITF",d:"Melanocyte TF"},
+    {n:"p16",d:"Melanoma / Spitz"},{n:"Ki-67 (in melanoma)",d:"Proliferation"},
+    {n:"CD1a",d:"Langerhans Cell"},{n:"Langerin",d:"Langerhans Cell"},
+    {n:"CK7 (skin)",d:"Paget / Carcinoma"},{n:"p63 (skin)",d:"Basal Cell Ca"},
+    {n:"Ber-EP4",d:"Basal Cell Ca"},{n:"BerEP4",d:"Adenocarcinoma"},
+  ],
+  prog:[
+    {n:"Ki-67",d:"Proliferation Index"},{n:"p53",d:"TP53 Mutation"},
+    {n:"p21",d:"Cell Cycle Arrest"},{n:"Rb",d:"Retinoblastoma Protein"},
+    {n:"E2F1",d:"Cell Cycle"},{n:"Cyclin D1",d:"Cell Cycle"},
+    {n:"MLH1",d:"MMR — Lynch Syndrome"},{n:"MSH2",d:"MMR — Lynch Syndrome"},
+    {n:"MSH6",d:"MMR — Lynch Syndrome"},{n:"PMS2",d:"MMR — Lynch Syndrome"},
+    {n:"PD-L1 (28-8)",d:"Checkpoint (Pembrolizumab)"},{n:"PD-L1 (22C3)",d:"Checkpoint"},
+    {n:"VEGF",d:"Angiogenesis"},{n:"HER2 FISH",d:"Amplification"},
+  ],
+  ct:[
+    {n:"H&E",d:"Haematoxylin & Eosin"},{n:"Masson Trichrome",d:"Collagen / Fibrosis"},
+    {n:"Reticulin (Gordon)",d:"Reticular Framework"},{n:"Van Gieson",d:"Collagen vs Muscle"},
+    {n:"Elastic (VVG)",d:"Elastic Fibers"},{n:"Goldner Trichrome",d:"Bone / Calcified"},
+    {n:"PTAH",d:"Muscle Striations"},{n:"Weigert Resorcin",d:"Elastic Fibers"},
+  ],
+  micro:[
+    {n:"Gram Stain",d:"Bacteria"},{n:"Ziehl-Neelsen (ZN)",d:"AFB / TB"},
+    {n:"Modified ZN",d:"Nocardia / Weakly AFB"},{n:"Auramine-Rhodamine",d:"Fluorescence AFB"},
+    {n:"GMS (Gomori)",d:"Fungi (methenamine)"},{n:"PAS Fungal",d:"Fungal Cell Wall"},
+    {n:"Mucicarmine (Cryptococcus)",d:"Cryptococcal capsule"},
+    {n:"Warthin-Starry",d:"H. pylori / Spirochetes"},{n:"Giemsa",d:"H. pylori / Parasites"},
+    {n:"Fite Stain",d:"Mycobacterium leprae"},
+  ],
+  dep:[
+    {n:"Congo Red",d:"Amyloid"},{n:"Congo Red (polarized)",d:"Amyloid (birefringence)"},
+    {n:"Prussian Blue",d:"Iron / Hemosiderin"},{n:"Von Kossa",d:"Calcium"},
+    {n:"Alizarin Red S",d:"Calcium Deposits"},{n:"Rhodanine",d:"Copper"},
+    {n:"Rubeanic Acid",d:"Copper"},{n:"Oil Red O",d:"Lipids (frozen)"},
+    {n:"Sudan III/IV",d:"Lipids"},{n:"Sudan Black B",d:"Lipids / AML Myeloblasts"},
+  ],
+  bm:[
+    {n:"Chloroacetate Esterase",d:"Myeloid (CAE)"},{n:"Non-specific Esterase",d:"Monocytic (NSE)"},
+    {n:"Periodic Acid-Schiff (BM)",d:"Glycogen (PAS)"},{n:"Alkaline Phosphatase",d:"Neutrophil LAP"},
+    {n:"Myeloperoxidase",d:"Myeloblast"},{n:"Toluidine Blue",d:"Mast Cell Granules"},
+    {n:"Perls (iron)",d:"Sideroblasts / Ringed"},
+  ],
+  gly:[
+    {n:"PAS",d:"Glycogen / Basement Membrane"},{n:"PAS-D (Diastase)",d:"PAS post diastase"},
+    {n:"Alcian Blue pH 2.5",d:"Acid Mucopolysaccharides"},{n:"Alcian Blue pH 1.0",d:"Sulphomucins"},
+    {n:"Mucicarmine",d:"Epithelial Mucin"},{n:"Colloidal Iron",d:"Acid Mucins"},
+    {n:"AB/PAS Combined",d:"Neutral + Acid Mucin"},{n:"Toluidine Blue",d:"Metachromatic Mucin"},
+  ],
+};
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let selI=new Set(), selS=new Set(), selC=[];
+let orders=[];
+try{orders=JSON.parse(localStorage.getItem('hlo2')||'[]');}catch(e){}
+let modalData=null;
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+function init(){
+  const map=[
+    ['g-breast','breast','ihc'],['g-lymphoma','lymphoma','ihc'],
+    ['g-gi','gi','ihc'],['g-lung','lung','ihc'],
+    ['g-epi','epi','ihc'],['g-neuro','neuro','ihc'],
+    ['g-uro','uro','ihc'],['g-soft','soft','ihc'],
+    ['g-skin','skin','ihc'],['g-prog','prog','ihc'],
+    ['g-ct','ct','ss'],['g-micro','micro','ss'],
+    ['g-dep','dep','ss'],['g-bm','bm','ss'],['g-gly','gly','ss'],
+  ];
+  map.forEach(([id,key,type])=>renderMkrs(id,D[key],type));
+  tick(); setInterval(tick,1000);
+  renderOrders(); updateNB();
+}
+
+function renderMkrs(id,list,type){
+  document.getElementById(id).innerHTML=list.map(m=>`
+    <div class="mi" id="mk-${type}-${m.n.replace(/[^a-zA-Z0-9]/g,'_')}" onclick="tog('${type}','${m.n.replace(/'/g,"\\'")}','${m.n.replace(/[^a-zA-Z0-9]/g,'_')}')">
+      <div class="mck">✓</div>
+      <div><div class="mn">${m.n}</div><div class="md">${m.d}</div></div>
+    </div>`).join('');
+}
+
+function tog(type,name,safeId){
+  const set=type==='ihc'?selI:selS;
+  const cls=type==='ihc'?'si':'ss2';
+  const el=document.getElementById(`mk-${type}-${safeId}`);
+  if(!el)return;
+  if(set.has(name)){set.delete(name);el.classList.remove(cls);}
+  else{set.add(name);el.classList.add(cls);}
+  updateChips();
+}
+
+function addCustom(type){
+  const inp=document.getElementById(type==='ihc'?'cihc':'css2');
+  const v=inp.value.trim();
+  if(!v){toast('⚠️ أدخل الاسم','er');return;}
+  selC.push({t:type,n:v});
+  inp.value='';
+  updateChips();
+  toast('✅ أضيف: '+v,'ok');
+}
+
+function updateChips(){
+  const w=document.getElementById('chips');
+  const ch=[
+    ...[...selI].map(n=>`<span class="chip ci">🔵 ${esc(n)} <span class="cr" onclick="rmI('${esc(n)}')">×</span></span>`),
+    ...[...selS].map(n=>`<span class="chip cs">🟡 ${esc(n)} <span class="cr" onclick="rmS('${esc(n)}')">×</span></span>`),
+    ...selC.map((c,i)=>`<span class="chip cc">✏️ ${esc(c.n)} <span class="cr" onclick="rmC(${i})">×</span></span>`),
+  ];
+  w.innerHTML=ch.length?ch.join(''):'<span class="echip">لم يتم الاختيار بعد...</span>';
+}
+
+function rmI(name){selI.delete(name);const e=findMk('ihc',name);if(e)e.classList.remove('si');updateChips();}
+function rmS(name){selS.delete(name);const e=findMk('ss',name);if(e)e.classList.remove('ss2');updateChips();}
+function rmC(i){selC.splice(i,1);updateChips();}
+function findMk(type,name){return document.getElementById('mk-'+type+'-'+name.replace(/[^a-zA-Z0-9]/g,'_'));}
+
+function clearAll(){
+  selI.forEach(n=>{const e=findMk('ihc',n);if(e)e.classList.remove('si');});
+  selS.forEach(n=>{const e=findMk('ss',n);if(e)e.classList.remove('ss2');});
+  selI.clear();selS.clear();selC=[];updateChips();
+}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ══════════════════════════════════════════
+//  CLOCK
+// ══════════════════════════════════════════
+function tick(){
+  const n=new Date();
+  const days=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  document.getElementById('clk').textContent=n.toLocaleTimeString('en-GB');
+  document.getElementById('clkd').textContent=days[n.getDay()]+' — '+n.toLocaleDateString('ar-SA');
+}
+
+// ══════════════════════════════════════════
+//  FORM
+// ══════════════════════════════════════════
+function getForm(){
+  const n=new Date();
+  return{
+    id:'ORD-'+Date.now(),
+    pName:document.getElementById('pName').value.trim(),
+    cNo:document.getElementById('cNo').value.trim(),
+    mrNo:document.getElementById('mrNo').value.trim(),
+    drName:document.getElementById('drName').value.trim(),
+    notes:document.getElementById('notes').value.trim(),
+    ihc:[...selI],ss:[...selS],custom:[...selC],
+    datetime:n.toLocaleString('ar-SA',{dateStyle:'full',timeStyle:'medium'}),
+    iso:n.toISOString(),
+  };
+}
+
+function valid(d){
+  if(!d.pName)return'يرجى إدخال اسم المريض';
+  if(!d.cNo)return'يرجى إدخال رقم الحالة';
+  if(!d.mrNo)return'يرجى إدخال رقم الملف';
+  if(!d.drName)return'يرجى إدخال اسم الطبيب';
+  if(!d.ihc.length&&!d.ss.length&&!d.custom.length)return'يرجى اختيار فحص واحد على الأقل';
+  return null;
+}
+
+function submitOrder(){
+  const d=getForm(),e=valid(d);
+  if(e){toast('⚠️ '+e,'er');return;}
+  orders.unshift(d);save();
+  toast('✅ أُرسل الطلب إلى الفني','ok');
+  resetForm();updateNB();
+}
+
+function previewOrder(){
+  const d=getForm(),e=valid(d);
+  if(e){toast('⚠️ '+e,'er');return;}
+  showModal(d);
+}
+
+function downloadWord(){
+  const d=getForm(),e=valid(d);
+  if(e){toast('⚠️ '+e,'er');return;}
+  genWord(d);
+}
+
+function resetForm(){
+  ['pName','cNo','mrNo','drName','notes'].forEach(id=>document.getElementById(id).value='');
+  clearAll();
+}
+
+// ══════════════════════════════════════════
+//  ORDERS TABLE
+// ══════════════════════════════════════════
+let filteredCache=[];
+
+function renderOrders(q=''){
+  const wrap=document.getElementById('cards-wrap');
+  const ql=q.toLowerCase();
+  filteredCache=orders.filter(o=>!ql||o.pName.toLowerCase().includes(ql)||o.cNo.toLowerCase().includes(ql)||o.drName.toLowerCase().includes(ql)||o.mrNo.toLowerCase().includes(ql));
+  if(!filteredCache.length){
+    wrap.innerHTML=`<div class="empty-st"><div class="ei">🧪</div><p>${ql?'لا نتائج مطابقة':'لا توجد طلبات بعد'}</p></div>`;return;
+  }
+  wrap.innerHTML=filteredCache.map((o,i)=>{
+    const ihcCount=o.ihc.length+((o.custom||[]).filter(c=>c.t==='ihc').length);
+    const ssCount=o.ss.length+((o.custom||[]).filter(c=>c.t==='ss').length);
+    return`<div class="ocard">
+      <div class="ocard-top">
+        <div class="ocard-patient">
+          <div class="name">🧑‍⚕️ ${o.pName}</div>
+          <div class="dt">🕐 ${o.datetime}</div>
+        </div>
+        <div class="ocard-num">
+          <div>الحالة: <b>${o.cNo}</b></div>
+          <div>الملف: <b>${o.mrNo}</b></div>
+        </div>
+      </div>
+      <div class="ocard-meta">
+        <span class="ocard-dr">👨‍⚕️ ${o.drName}</span>
+        ${ihcCount?`<span class="ocard-badge ocard-ihc">IHC: ${ihcCount}</span>`:''}
+        ${ssCount?`<span class="ocard-badge ocard-ss">Special: ${ssCount}</span>`:''}
+      </div>
+      <div class="ocard-actions">
+        <button class="ab ap" onclick="rowPrint(${i})">🖨️ طباعة PDF</button>
+        <button class="ab aw" onclick="rowWord(${i})">📄 تحميل Word</button>
+        <button class="ab av" onclick="rowView(${i})">👁️ عرض</button>
+        <button class="ab adl" onclick="delOrd('${o.id}')">🗑️ حذف</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function rowPrint(i){ const o=filteredCache[i]; if(o) openPW(buildRep(o)); }
+function rowWord(i){  const o=filteredCache[i]; if(o) genWord(o); }
+function rowView(i){  const o=filteredCache[i]; if(o) showModal(o); }
+function delOrd(id){orders=orders.filter(o=>o.id!==id);save();renderOrders();updateNB();toast('🗑️ حُذف الطلب','er');}
+function save(){try{localStorage.setItem('hlo2',JSON.stringify(orders));}catch(e){}}
+function updateNB(){document.getElementById('nc').textContent=orders.length;}
+
+// ══════════════════════════════════════════
+//  MODAL
+// ══════════════════════════════════════════
+function showModal(d){
+  modalData=d;
+  document.getElementById('rarea').innerHTML=buildRep(d);
+  document.getElementById('modal').classList.add('on');
+}
+function closeModal(){document.getElementById('modal').classList.remove('on');modalData=null;}
+function printRep(){if(modalData)openPW(buildRep(modalData));}
+function wordFromModal(){if(modalData)genWord(modalData);}
+
+function openPW(html){
+  const w=window.open('','_blank','width=900,height=720');
+  if(!w){toast('⚠️ السماح بالنوافذ المنبثقة','er');return;}
+  w.document.write(printCSS()+html+'</body></html>');
+  w.document.close();w.focus();setTimeout(()=>w.print(),550);
+}
+
+function printCSS(){return`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>طلب فحص مختبر</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=IBM+Plex+Mono:wght@600&display=swap" rel="stylesheet">
+<style>
+body{font-family:'Cairo',sans-serif;direction:rtl;padding:18px;background:white;margin:0;}
+.rp{background:white;color:#15202e;max-width:800px;margin:0 auto;}
+.rp-top{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:11px;margin-bottom:13px;border-bottom:3px solid #07101f;}
+.rp-brand h2{font-size:16px;font-weight:900;color:#07101f;margin:0;}
+.rp-brand p{font-size:9px;color:#888;margin:2px 0 0;}
+.rp-badge{background:#0096b7;color:white;padding:4px 12px;border-radius:5px;font-size:12px;font-weight:900;display:inline-block;}
+.rp-info{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px 14px;background:#f4f8fb;border:1px solid #dde8f0;border-radius:6px;padding:11px;margin-bottom:13px;}
+.rp-row{display:flex;flex-direction:column;gap:1px;}
+.rp-lbl{font-size:8px;color:#aaa;font-weight:800;letter-spacing:0.3px;}
+.rp-val{font-size:12px;font-weight:800;color:#15202e;}
+.rp-sec{margin-bottom:12px;}
+.rp-sec-title{font-size:11px;font-weight:900;border-right:4px solid #0096b7;padding-right:7px;margin-bottom:8px;color:#0096b7;}
+.rp-sec-title.ss{color:#b8870a;border-right-color:#b8870a;}
+.rp-sec-title.cu{color:#6a3ecf;border-right-color:#6a3ecf;}
+.rp-markers{display:grid;grid-template-columns:repeat(auto-fill,minmax(95px,1fr));gap:4px;}
+.rp-m{padding:3px 7px;border-radius:4px;font-size:10px;font-weight:800;text-align:center;font-family:'IBM Plex Mono',monospace;direction:ltr;}
+.rp-m.i{background:rgba(0,150,183,0.09);color:#005f80;border:1px solid rgba(0,150,183,0.2);}
+.rp-m.s{background:rgba(184,135,10,0.09);color:#7a5800;border:1px solid rgba(184,135,10,0.18);}
+.rp-m.c{background:rgba(106,62,207,0.09);color:#4a2aa0;border:1px solid rgba(106,62,207,0.18);}
+.rp-notes{padding:7px 9px;background:#fffbee;border:1px solid #f0dfa0;border-radius:5px;font-size:11px;color:#555;margin-top:9px;}
+.rp-notes b{color:#7a5800;}
+.rp-footer{margin-top:14px;padding-top:9px;border-top:1px solid #e0e8f0;display:flex;justify-content:space-between;align-items:flex-end;}
+.rp-sig{text-align:center;}.rp-sig .line{width:115px;border-top:2px solid #15202e;margin:16px auto 4px;}
+.rp-sig p{font-size:10px;font-weight:800;color:#15202e;}.rp-sig small{font-size:8px;color:#999;}
+@media print{body{padding:8px;}@page{margin:12mm;}}
+</style><body>`;}
+
+function buildRep(d){
+  const ihcB=d.ihc.length?`<div class="rp-sec"><div class="rp-sec-title">🔵 IHC — Immunohistochemistry (${d.ihc.length})</div><div class="rp-markers">${d.ihc.map(n=>`<div class="rp-m i">${n}</div>`).join('')}</div></div>`:'';
+  const ssB=d.ss.length?`<div class="rp-sec"><div class="rp-sec-title ss">🟡 Special Stains (${d.ss.length})</div><div class="rp-markers">${d.ss.map(n=>`<div class="rp-m s">${n}</div>`).join('')}</div></div>`:'';
+  const cuB=(d.custom&&d.custom.length)?`<div class="rp-sec"><div class="rp-sec-title cu">✏️ فحوصات إضافية (${d.custom.length})</div><div class="rp-markers">${d.custom.map(c=>`<div class="rp-m c">${c.n}</div>`).join('')}</div></div>`:'';
+  return`<div class="rp">
+  <div class="rp-top">
+    <div class="rp-brand"><h2>🏥 مختبر الأنسجة والخلايا</h2><p>Histopathology & Cytology Laboratory</p></div>
+    <div style="text-align:center;"><div class="rp-badge">طلب فحص مختبر</div><div style="font-size:8.5px;color:#999;margin-top:3px;">Lab Test Request Form</div></div>
+  </div>
+  <div class="rp-info">
+    <div class="rp-row"><span class="rp-lbl">اسم المريض / Patient Name</span><span class="rp-val">${d.pName}</span></div>
+    <div class="rp-row"><span class="rp-lbl">رقم الحالة / Case No.</span><span class="rp-val" style="font-family:monospace;direction:ltr;">${d.cNo}</span></div>
+    <div class="rp-row"><span class="rp-lbl">رقم الملف / MR No.</span><span class="rp-val" style="font-family:monospace;direction:ltr;">${d.mrNo}</span></div>
+    <div class="rp-row"><span class="rp-lbl">الطبيب الطالب / Physician</span><span class="rp-val">${d.drName}</span></div>
+    <div class="rp-row" style="grid-column:2/-1;"><span class="rp-lbl">📅 تاريخ ووقت الطلب / Request Date & Time</span><span class="rp-val" style="color:#0096b7;">${d.datetime}</span></div>
+  </div>
+  ${ihcB}${ssB}${cuB}
+  ${d.notes?`<div class="rp-notes"><b>ملاحظات: </b>${d.notes}</div>`:''}
+  <div class="rp-footer">
+    <div style="font-size:8px;color:#ccc;">ID: ${d.id}</div>
+    <div class="rp-sig"><div class="line"></div><p>توقيع الطبيب الطالب</p><small>Physician Signature</small></div>
+    <div style="text-align:left;"><div style="font-size:9px;color:#aaa;margin-bottom:14px;">فني المختبر / Lab Tech</div><div style="width:90px;border-top:1px solid #bbb;"></div></div>
+  </div>
+</div>`;}
+
+// ══════════════════════════════════════════
+//  WORD DOWNLOAD
+// ══════════════════════════════════════════
+function genWord(d){
+  const ihcRows=d.ihc.map(n=>`<tr><td style="font-family:monospace;padding:5px 9px;border:1px solid #dde8f0;">${n}</td><td style="padding:5px 9px;border:1px solid #dde8f0;">IHC</td><td style="padding:5px 9px;border:1px solid #dde8f0;width:130px;"></td></tr>`).join('');
+  const ssRows=d.ss.map(n=>`<tr><td style="font-family:monospace;padding:5px 9px;border:1px solid #dde8f0;">${n}</td><td style="padding:5px 9px;border:1px solid #dde8f0;">Special Stain</td><td style="padding:5px 9px;border:1px solid #dde8f0;width:130px;"></td></tr>`).join('');
+  const cuRows=(d.custom||[]).map(c=>`<tr><td style="font-family:monospace;padding:5px 9px;border:1px solid #dde8f0;">${c.n}</td><td style="padding:5px 9px;border:1px solid #dde8f0;">${c.t==='ihc'?'IHC':'Special Stain'} ✏️</td><td style="padding:5px 9px;border:1px solid #dde8f0;width:130px;"></td></tr>`).join('');
+  const w=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="UTF-8">
+<style>
+@page{margin:2cm;}
+body{font-family:Arial,sans-serif;direction:rtl;font-size:11pt;color:#15202e;}
+h1{font-size:15pt;color:#07101f;border-bottom:3px solid #07101f;padding-bottom:6px;margin-bottom:12px;}
+h2{font-size:11.5pt;color:#0096b7;border-right:5px solid #0096b7;padding-right:8px;margin:14px 0 8px;}
+.info-tbl{width:100%;border-collapse:collapse;background:#f4f8fb;margin-bottom:14px;}
+.info-tbl td{padding:6px 10px;font-size:10.5pt;border:1px solid #dde8f0;}
+.info-tbl .lbl{font-size:8.5pt;color:#999;font-weight:bold;display:block;}
+.mk-tbl{width:100%;border-collapse:collapse;margin-bottom:12px;}
+.mk-tbl th{background:#0096b7;color:white;padding:5px 9px;font-size:10pt;text-align:right;}
+.mk-tbl td{border:1px solid #dde8f0;padding:5px 9px;font-size:10.5pt;}
+.mk-tbl tr:nth-child(even) td{background:#f8fbfd;}
+.notes-box{background:#fffbee;border:1px solid #f0dfa0;padding:8px 11px;margin-bottom:14px;font-size:10.5pt;}
+.sig-tbl{width:100%;margin-top:28px;border-collapse:collapse;}
+.sig-tbl td{text-align:center;padding-top:4px;font-size:9.5pt;font-weight:bold;}
+</style></head><body>
+<h1>🏥 مختبر الأنسجة والخلايا — Histopathology & Cytology Lab</h1>
+<p style="color:#0096b7;font-size:11pt;font-weight:bold;margin-bottom:12px;">طلب فحص مختبر — Lab Test Request</p>
+<table class="info-tbl"><tbody>
+<tr>
+  <td><span class="lbl">اسم المريض / Patient Name</span><strong>${d.pName}</strong></td>
+  <td><span class="lbl">رقم الحالة / Case No.</span><strong style="direction:ltr;display:block;">${d.cNo}</strong></td>
+  <td><span class="lbl">رقم الملف / MR No.</span><strong style="direction:ltr;display:block;">${d.mrNo}</strong></td>
+</tr>
+<tr>
+  <td><span class="lbl">الطبيب الطالب / Physician</span><strong>${d.drName}</strong></td>
+  <td colspan="2"><span class="lbl">📅 تاريخ ووقت الطلب / Date & Time</span><strong style="color:#0096b7;">${d.datetime}</strong></td>
+</tr>
+</tbody></table>
+${d.ihc.length?`<h2>🔵 التلوين المناعي الكيميائي — IHC (${d.ihc.length})</h2>
+<table class="mk-tbl"><thead><tr><th>Marker</th><th>Type</th><th>Result / ملاحظة</th></tr></thead><tbody>${ihcRows}</tbody></table>`:''}
+${d.ss.length?`<h2>🟡 الصبغات الخاصة — Special Stains (${d.ss.length})</h2>
+<table class="mk-tbl"><thead><tr><th>Stain</th><th>Type</th><th>Result / ملاحظة</th></tr></thead><tbody>${ssRows}</tbody></table>`:''}
+${(d.custom||[]).length?`<h2>✏️ فحوصات إضافية — Additional</h2>
+<table class="mk-tbl"><thead><tr><th>Marker / Stain</th><th>Type</th><th>Result / ملاحظة</th></tr></thead><tbody>${cuRows}</tbody></table>`:''}
+${d.notes?`<h2>📝 ملاحظات</h2><div class="notes-box">${d.notes}</div>`:''}
+<table class="sig-tbl"><tr>
+  <td style="width:33%;"><div style="border-top:2px solid #333;width:130px;margin:24px auto 5px;"></div>توقيع الطبيب الطالب<br><span style="font-size:8.5pt;color:#888;">Physician Signature</span></td>
+  <td style="width:33%;"><div style="border-top:2px solid #333;width:130px;margin:24px auto 5px;"></div>فني المختبر<br><span style="font-size:8.5pt;color:#888;">Lab Technician</span></td>
+  <td style="width:33%;"><div style="border-top:2px solid #333;width:130px;margin:24px auto 5px;"></div>أخصائي الأنسجة<br><span style="font-size:8.5pt;color:#888;">Pathologist</span></td>
+</tr></table>
+<p style="font-size:8pt;color:#bbb;margin-top:18px;border-top:1px solid #eee;padding-top:5px;">Order ID: ${d.id} | ${d.datetime}</p>
+</body></html>`;
+  const blob=new Blob(['\ufeff'+w],{type:'application/msword;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='lab-order-'+d.cNo+'.doc';
+  document.body.appendChild(a);a.click();
+  document.body.removeChild(a);URL.revokeObjectURL(url);
+  toast('📄 تم تحميل ملف Word','ok');
+}
+
+// ══════════════════════════════════════════
+//  TAB SWITCHES
+// ══════════════════════════════════════════
+function stainTab(id,btn){
+  document.querySelectorAll('.spanel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.stab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('sp-'+id).classList.add('on');
+  btn.classList.add('on');
+}
+
+function switchTab(id,btn){
+  document.querySelectorAll('.tp').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tp-'+id).classList.add('on');
+  btn.classList.add('on');
+  if(id==='list')renderOrders();
+}
+
+// ══════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════
+function toast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast on '+type;
+  clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove('on'),2800);
+}
+
+init();
+</script>
+</body>
+</html>
